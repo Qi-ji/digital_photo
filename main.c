@@ -170,9 +170,9 @@ main( int     argc,
                  target_height - slot->bitmap_top );
 
 	printf("Unicode: 0x%x\n", chinese_str[n]);
-	printf("origin.x/64 = %d, origin.y/64 = %d\n", pen.x/64, pen.y/64);
-	printf("xMin = %d, xMax = %d, yMin = %d, yMax = %d\n", bbox.xMin, bbox.xMax, bbox.yMin, bbox.yMax);
-    printf("slot->advance.x/64 = %d, slot->advance.y/64 = %d\n", slot->advance.x/64, slot->advance.y/64);
+	printf("origin.x/64 = %ld, origin.y/64 = %ld\n", pen.x/64, pen.y/64);
+	printf("xMin = %ld, xMax = %ld, yMin = %ld, yMax = %ld\n", bbox.xMin, bbox.xMax, bbox.yMin, bbox.yMax);
+    printf("slot->advance.x/64 = %ld, slot->advance.y/64 = %ld\n", slot->advance.x/64, slot->advance.y/64);
 
     /* increment pen position */
     pen.x += slot->advance.x;
