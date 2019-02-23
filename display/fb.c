@@ -168,13 +168,14 @@ static int FBShowPixel(PT_PixelDatas ptPixelDatas)
 
 	GetDefDispResolution(&iFBXres, &iFBYres, &iFBBpp);
 	iFBLineByte = iFBXres * iFBBpp / 8;
+	/*使用三目运算来判读fb 与 pic 哪个的宽，高更大，防止memcpy时内存溢出*/
 	iLineByteSm = (ptPixelDatas->iLineByte >= iFBLineByte) ? iFBLineByte : ptPixelDatas->iLineByte;
 	iHeightSm = (ptPixelDatas->iHeight >= iFBYres) ? iFBYres : ptPixelDatas->iHeight;
 
-	debug(" iLineByteS= %d.\n", iLineByteSm);
-	debug(" iHeightSm= %d.\n", iHeightSm);
-	debug(" iFBLineByte= %d.\n", iFBLineByte);
-	debug(" ptPixelDatas->iLineByte = %d.\n", ptPixelDatas->iLineByte);
+	//debug(" iLineByteS= %d.\n", iLineByteSm);
+	//debug(" iHeightSm= %d.\n", iHeightSm);
+	//debug(" iFBLineByte= %d.\n", iFBLineByte);
+	//debug(" ptPixelDatas->iLineByte = %d.\n", ptPixelDatas->iLineByte);
 
 	for (y=0; y<iHeightSm; y++)
 	{
