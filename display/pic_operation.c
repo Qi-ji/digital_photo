@@ -98,8 +98,8 @@ int PicZoom(PT_PixelDatas ptOriginPic, PT_PixelDatas ptZoomPic)
 	iRateX = iOriginWidth / iZoomWidth;
 	iRateY = iOriginHeight / iZoomHeight;
 
-	debug("iOriginWidth = %d, iZoomWidth = %d \n", iOriginWidth, iZoomWidth);
-	debug("iRateX = %d, iRateY = %d \n", iRateX, iRateY);
+	//debug("iOriginWidth = %d, iZoomWidth = %d \n", iOriginWidth, iZoomWidth);
+	//debug("iRateX = %d, iRateY = %d \n", iRateX, iRateY);
 		
 	//pucSrcXPixelTable = malloc(ptZoomPic->iLineByte);
 	pucSrcXPixelTable = malloc(sizeof(int) * iZoomWidth);
@@ -108,12 +108,13 @@ int PicZoom(PT_PixelDatas ptOriginPic, PT_PixelDatas ptZoomPic)
 		return -1;
 	}
 	
-	for (x=0; x<ptZoomPic->iLineByte; x++)
+	//for (x=0; x<ptZoomPic->iLineByte; x++)  /* x 的循环条件错误，不应该是 x<ptZoomPic->iLineByte */
+	for (x=0; x<iZoomWidth; x++)
 	{
 		pucSrcXPixelTable[x] =  x * iRateX;  /*存放着对应的原图中的x坐标*/
 	}
-	debug("ptZoomPic->iLineByte = %d\n", ptZoomPic->iLineByte);
-	debug("ptOriginPic->iLineByte = %d\n", ptOriginPic->iLineByte);
+	//debug("ptZoomPic->iLineByte = %d\n", ptZoomPic->iLineByte);
+	//debug("ptOriginPic->iLineByte = %d\n", ptOriginPic->iLineByte);
 	for (y=0; y<iZoomHeight; y++)
 	{
 		iSrcY = y * iRateY;
@@ -122,58 +123,9 @@ int PicZoom(PT_PixelDatas ptOriginPic, PT_PixelDatas ptZoomPic)
 		for (x=0; x<iZoomWidth; x++)
 		{
 			iSrcX = pucSrcXPixelTable[x];
-			memcpy(pucDst+x*4, pucSrc+iSrcX*4, 4);
+			memcpy(pucDst + x*ptOriginPic->ibpp/8, pucSrc + iSrcX*ptZoomPic->ibpp/8, ptZoomPic->ibpp/8);
 		}
 	}
 	free(pucSrcXPixelTable);	
-}
-
-
-int PicZoom1(PT_PixelDatas ptOriginPic, PT_PixelDatas ptZoomPic)
-{
-    unsigned long dwDstWidth = ptZoomPic->iWidth;
-    unsigned long* pdwSrcXTable;
-	unsigned long x;
-	unsigned long y;
-	unsigned long dwSrcY;
-	unsigned char *pucDest;
-	unsigned char *pucSrc;
-	unsigned long dwPixelBytes = ptOriginPic->ibpp/8;
-
-	if (ptOriginPic->ibpp != ptZoomPic->ibpp)
-	{
-		return -1;
-	}
-
-    pdwSrcXTable = malloc(sizeof(unsigned long) * dwDstWidth);
-    if (NULL == pdwSrcXTable)
-    {
-        debug("malloc error!\n");
-        return -1;
-    }
-
-    for (x = 0; x < dwDstWidth; x++)//生成表 pdwSrcXTable
-    {
-        pdwSrcXTable[x]=(x*ptOriginPic->iWidth/ptZoomPic->iWidth);
-    }
-
-    for (y = 0; y < ptZoomPic->iHeight; y++)
-    {			
-        dwSrcY = (y * ptOriginPic->iHeight / ptZoomPic->iHeight);
-
-		pucDest = ptZoomPic->pucPixelDatas + y*ptZoomPic->iLineByte;
-		pucSrc  = ptOriginPic->pucPixelDatas + dwSrcY*ptOriginPic->iLineByte;
-		
-        for (x = 0; x <dwDstWidth; x++)
-        {
-            /* 原图座标: pdwSrcXTable[x]，srcy
-             * 缩放座标: x, y
-			 */
-			 memcpy(pucDest+x*dwPixelBytes, pucSrc+pdwSrcXTable[x]*dwPixelBytes, dwPixelBytes);
-        }
-    }
-
-    free(pdwSrcXTable);
-	return 0;
 }
 

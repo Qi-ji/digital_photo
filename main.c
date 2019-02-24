@@ -55,8 +55,8 @@ int main(void)
 	}
 	
 	GetPicPraser(&tFileMap)->GetPixelDatas(&tFileMap, &tPixelDatas);
-	tZoomPixelDatas.iWidth  = 1024;
-	tZoomPixelDatas.iHeight = 600;
+	tZoomPixelDatas.iWidth  = 512;
+	tZoomPixelDatas.iHeight = 300;
 	
 	tZoomPixelDatas.iLineByte = tZoomPixelDatas.iWidth * 4;
 	tZoomPixelDatas.iTotalByte = tZoomPixelDatas.iLineByte * tZoomPixelDatas.iHeight;
@@ -68,10 +68,10 @@ int main(void)
 		return -1; 
 	}
 	
-	//PicZoom1(&tPixelDatas, &tZoomPixelDatas);
+	PicZoom(&tPixelDatas, &tZoomPixelDatas);
 	//PicPraser("bmp")->GetPixelDatas(&tFileMap, &tPixelDatas);
-	GetDefaultDispOpr()->ShowOnePage(&tPixelDatas);
-	//GetDefaultDispOpr()->ShowPixel(&tZoomPixelDatas);
+	GetDefaultDispOpr()->ShowPixel(&tPixelDatas);
+	GetDefaultDispOpr()->ShowPixel(&tZoomPixelDatas);
 	free(tZoomPixelDatas.pucPixelDatas);
 
 /*实验jpg格式图片*/
@@ -82,7 +82,7 @@ int main(void)
 		debug("mapjpgfile ok\n");
 	}
 	PicPraser("jpg")->GetPixelDatas(&tFileMap, &tPixelDatas);
-	GetDefaultDispOpr()->ShowPixel(&tPixelDatas);
+	//GetDefaultDispOpr()->ShowPixel(&tPixelDatas);
 #if 0
 /*实验jpg格式图片*/
 	snprintf(tFileMap.strFileName, 128, "%s", strSmallJpgName);
