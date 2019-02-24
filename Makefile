@@ -40,6 +40,7 @@ obj-y += main.o
 obj-y += display/
 obj-y += manage/
 obj-y += file/
+obj-y += page/
 
 all:
 	make -C ./ -f $(TOPDIR)/Makefile.build

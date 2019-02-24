@@ -1,0 +1,1 @@
+obj-y += main_page.o

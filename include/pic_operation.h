@@ -79,8 +79,6 @@ int PicMerge(int iX, int iY, PT_PixelDatas ptSmallPic, PT_PixelDatas ptBigPic);
 int PicZoom(PT_PixelDatas ptOriginPic, PT_PixelDatas ptZoomPic);
 
 
-int PicZoom1(PT_PixelDatas ptOriginPic, PT_PixelDatas ptZoomPic);
-
 
 
 #endif
