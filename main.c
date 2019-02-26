@@ -8,6 +8,7 @@
 #include <pic_operation.h>
 #include <file.h>
 #include <pic_manager.h>
+#include <input_manager.h>
 
 char rgb_buf[RGB_BUF_SIZE];
 
@@ -95,6 +96,11 @@ int main(void)
 	PicMerge(10, 20, &tSmallPixelDatas, &tPixelDatas);
 	//GetDefaultDispOpr()->ShowOnePage(&tPixelDatas);
 #endif
+
+/*²âÊÔ´¥ÃþÆÁº¯Êý*/
+	T_InputEvent tInputEvent;
+	TSDevInit();
+	TSGetInputEvent(&tInputEvent);
 /****************************************************************************/
 /*
 	picture_scan("./image");

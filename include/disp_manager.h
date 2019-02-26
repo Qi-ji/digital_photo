@@ -33,6 +33,28 @@ typedef struct DispOpr{
 	struct DispOpr *next;
 }T_DispOpr, *PT_DispOpr;
 
+typedef enum {
+	VMS_FREE = 0,		/*该缓存空闲*/
+	VMS_CUR,				/*该缓存被当前线程使用*/
+	VMS_PRE,				/*该缓存为预备线程使用*/
+}E_VideoMemState;
+
+typedef enum {
+	VMC_BLANK = 0,			/*该缓存内空白*/
+	VMC_GENERATING,			/*该缓存的内容正在绘制*/
+	VMC_GENERATE,			/*该缓存的内容绘制结束*/
+}E_VideoMemContent;
+
+
+typedef struct VideoMem{
+	int iMemID;							/*该缓存的ID号*/
+	int bFBDev;							/* 1:表示该缓存是FB; 0:表示这是一个普通缓存*/
+	E_VideoMemState eMemState;			/*该缓存的状态：free/current threat/prepare threat*/
+	E_VideoMemContent eMemContent;		/*该缓存的内容：blank/generate/generating*/
+	T_PixelDatas tPixelDatas;			/*内存中内容的像素数据*/
+	struct VideoMem *ptNext;
+}T_VideoMem, *PT_VideoMem;
+
 
 /**********************************************************************
  * 函数名称： DispOprRegister
@@ -98,7 +120,30 @@ PT_DispOpr GetDefaultDispOpr(void);
  ***********************************************************************/
 int GetDefDispResolution(int *piXres, int *piYres, int *piBpp);
 
+/**********************************************************************
+ * 函数名称： AllocVideoMem
+ * 功能描述： VideoMem: 为加快显示速度,我们事先在缓存中构造好显示的页面的数据,
+ *            (这个缓存称为VideoMem)
+ *            显示时再把VideoMem中的数据复制到设备的显存上
+ * 输入参数： iNum
+ * 输出参数： 无
+ * 返 回 值： 0  - 成功
+ *            -1 - 失败(未使用SelectAndInitDefaultDispDev来选择显示模块)
+ ***********************************************************************/
+int AllocVideoMem(int iNum);
 
+/**********************************************************************
+ * 函数名称： GetVideoMem
+ * 功能描述： 获得一块可操作的VideoMem(它用于存储要显示的数据), 
+ *            用完后用PutVideoMem来释放
+ * 输入参数： iID  - ID值,先尝试在众多VideoMem中找到ID值相同的
+ *            bCur - 1表示当前程序马上要使用VideoMem,无法如何都要返回一个VideoMem
+ *                   0表示这是为了改进性能而提前取得VideoMem,不是必需的
+ * 输出参数： 无
+ * 返 回 值： NULL   - 失败,没有可用的VideoMem
+ *            非NULL - 成功,返回PT_VideoMem结构体
+ ***********************************************************************/
+PT_VideoMem GetVideoMem(int iID, int bCur);
 
 
 

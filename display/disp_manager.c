@@ -3,8 +3,9 @@
 
 #include <disp_manager.h>
 
-PT_DispOpr g_ptDispOprHead;
-PT_DispOpr g_ptDefaultDispOpr;
+static PT_DispOpr g_ptDispOprHead;
+static PT_DispOpr g_ptDefaultDispOpr;
+static PT_VideoMem g_ptVideoMemHead;
 
 
 
@@ -56,7 +57,7 @@ int DispOprRegister(PT_DispOpr ptDispOpr)
 	PT_PicFilePraser ptTmp = NULL;
 	int i = 0;
 	ptTmp = g_ptDispOprHead;
-	while (ptTmp)
+	while (ptTmp->next)
 	{
 		printf("%02d. DispOpr: %s.\n", i++, ptTmp->name);
 		ptTmp = ptTmp->next;
@@ -81,7 +82,7 @@ PT_DispOpr GetDispOpr(char *pcname)
 	}
 	PT_PicFilePraser ptTmp = NULL;
 	ptTmp = g_ptDispOprHead;
-	while(ptTmp)
+	while(ptTmp->next)
 	{
 		if (!strcmp(ptTmp->name, pcname))
 			return ptTmp;
@@ -141,8 +142,150 @@ int GetDefDispResolution(int *piXres, int *piYres, int *piBpp)
 	}
 }
 
+/**********************************************************************
+ * 函数名称： AllocVideoMem
+ * 功能描述： VideoMem: 为加快显示速度,我们事先在缓存中构造好显示的页面的数据,
+ *            (这个缓存称为VideoMem)
+ *            显示时再把VideoMem中的数据复制到设备的显存上
+ * 输入参数： iNum
+ * 输出参数： 无
+ * 返 回 值： 0  - 成功
+ *            -1 - 失败(未使用SelectAndInitDefaultDispDev来选择显示模块)
+ ***********************************************************************/
+int AllocVideoMem(int iNum)
+{
+	PT_VideoMem ptMemNew;
+	int iFBXres, iFBYres, iFBBpp;
+	int iFBLineByte, iFBTotalByte;
+	int i;
 
+	GetDefDispResolution(&iFBXres, &iFBYres, &iFBBpp);		/*获得默认设备的硬件信息*/
+	iFBLineByte = iFBXres * iFBBpp / 8;
+	iFBTotalByte = iFBLineByte * iFBYres;
+	
+	ptMemNew = malloc(sizeof(T_VideoMem));					/*为 ptMemNew 指针申请内存*/
+	if(NULL == ptMemNew)
+		return -1;
+/*将 FB 缓存放到链表中*/
+	ptMemNew->bFBDev = 1;
+	ptMemNew->iMemID = 0;
+	ptMemNew->eMemState = VMS_FREE;
+	ptMemNew->eMemContent = VMC_BLANK;
+	ptMemNew->tPixelDatas.pucPixelDatas = g_ptDefaultDispOpr->pdwDispMem;
+	ptMemNew->tPixelDatas.ibpp = iFBBpp;
+	ptMemNew->tPixelDatas.iHeight = iFBYres;
+	ptMemNew->tPixelDatas.iWidth = iFBXres;
+	ptMemNew->tPixelDatas.iLineByte = iFBLineByte;
+	ptMemNew->tPixelDatas.iTotalByte = iFBTotalByte;
 
+	if (iNum != 0)
+	{
+		/* 如果下面要分配用于缓存的VideoMem, 
+		 * 把设备本身framebuffer对应的VideoMem状态设置为VMS_USED_FOR_CUR,
+		 * 表示这个VideoMem不会被作为缓存分配出去
+		 */
+		ptMemNew->eMemState = VMS_CUR;
+	}
+	/*将FB的内存放置到链表的最后面*/
+	ptMemNew->ptNext = NULL;
+	g_ptVideoMemHead = ptMemNew;
+
+/*申请需要的缓存*/
+
+	for (i=0; i<iNum; i++)
+	{
+		/* 分配T_VideoMem结构体本身和"跟framebuffer同样大小的缓存" */
+		ptMemNew = malloc(sizeof(T_VideoMem) + iFBTotalByte);
+		if(NULL == ptMemNew)
+			return -1;
+		
+		ptMemNew->bFBDev = 0;
+		ptMemNew->iMemID = 0;
+		ptMemNew->eMemState = VMS_FREE;
+		ptMemNew->eMemContent = VMC_BLANK;
+		ptMemNew->tPixelDatas.ibpp = iFBBpp;
+		ptMemNew->tPixelDatas.iHeight = iFBYres;
+		ptMemNew->tPixelDatas.iWidth = iFBXres;
+		ptMemNew->tPixelDatas.iLineByte = iFBLineByte;
+		ptMemNew->tPixelDatas.iTotalByte = iFBTotalByte;
+		/*像素数据指针指向结构体内存之后的那块位置*/
+		ptMemNew->tPixelDatas.pucPixelDatas = (unsigned char *)(ptMemNew + 1);
+
+		/*内存放置到链表中，从头部插入链表*/
+	   ptMemNew->ptNext = g_ptVideoMemHead;
+	   g_ptVideoMemHead = ptMemNew;
+		
+	}
+
+	return 0;
+}
+
+/**********************************************************************
+ * 函数名称： GetVideoMem
+ * 功能描述： 获得一块可操作的VideoMem(它用于存储要显示的数据), 
+ *            用完后用PutVideoMem来释放
+ * 输入参数： iID  - ID值,先尝试在众多VideoMem中找到ID值相同的
+ *            bCur - 1表示当前程序马上要使用VideoMem,无法如何都要返回一个VideoMem
+ *                   0表示这是为了改进性能而提前取得VideoMem,不是必需的
+ * 输出参数： 无
+ * 返 回 值： NULL   - 失败,没有可用的VideoMem
+ *            非NULL - 成功,返回PT_VideoMem结构体
+ ***********************************************************************/
+PT_VideoMem GetVideoMem(int iID, int bCur)
+{
+	PT_VideoMem ptMemTemp;
+	ptMemTemp = g_ptVideoMemHead;
+
+/*1.先取出ID 相同 且 现在是空闲的内存*/
+	while (!ptMemTemp->ptNext)
+	{
+		if((ptMemTemp->iMemID == iID) && (ptMemTemp->eMemState == VMS_FREE)) /*防止有ID相同情况*/
+		{
+			ptMemTemp->eMemState = bCur ? VMS_CUR : VMS_PRE;
+			return ptMemTemp;
+		}
+		ptMemTemp = ptMemTemp->ptNext;
+	}
+	
+/*2.上述情况下的内存不存在，取出空闲的 且 无内容的内存*/
+	ptMemTemp = g_ptVideoMemHead;
+	while (!ptMemTemp->ptNext)
+	{
+		if((ptMemTemp->eMemContent == VMC_BLANK) && (ptMemTemp->eMemState == VMS_FREE)) /*防止有ID相同情况*/
+		{
+			ptMemTemp->iMemID = iID;
+			ptMemTemp->eMemState = bCur ? VMS_CUR : VMS_PRE;
+			return ptMemTemp;
+		}
+		ptMemTemp = ptMemTemp->ptNext;
+	}
+
+/*3.上述情况下的内存不存在，取出空闲的内存*/
+	ptMemTemp = g_ptVideoMemHead;
+	while (!ptMemTemp->ptNext)
+	{
+		if(ptMemTemp->eMemState == VMS_FREE) 
+		{
+			ptMemTemp->iMemID = iID;
+			ptMemTemp->eMemContent = VMC_BLANK;
+			ptMemTemp->eMemState = bCur ? VMS_CUR : VMS_PRE;
+			return ptMemTemp;
+		}
+		ptMemTemp = ptMemTemp->ptNext;
+	}
+
+/*3.上述情况下的内存不存在，而且iCur 为1 ，即该内存马上就要使用，则任意取出一个内存*/
+	if (bCur)
+	{
+		ptMemTemp = g_ptVideoMemHead;
+		ptMemTemp->iMemID = iID;
+		ptMemTemp->eMemContent = VMC_BLANK;
+		ptMemTemp->eMemState = bCur ? VMS_CUR : VMS_PRE;
+		return ptMemTemp;
+	}
+
+	return NULL;
+}
 
 
 

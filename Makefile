@@ -41,6 +41,7 @@ obj-y += display/
 obj-y += manage/
 obj-y += file/
 obj-y += page/
+obj-y += input/
 
 all:
 	make -C ./ -f $(TOPDIR)/Makefile.build
