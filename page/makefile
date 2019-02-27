@@ -1,1 +1,2 @@
 obj-y += main_page.o
+obj-y += page_manager.o

@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include <disp_manager.h>
+#include <config.h>
 
 static PT_DispOpr g_ptDispOprHead;
 static PT_DispOpr g_ptDefaultDispOpr;
@@ -57,7 +58,7 @@ int DispOprRegister(PT_DispOpr ptDispOpr)
 	PT_PicFilePraser ptTmp = NULL;
 	int i = 0;
 	ptTmp = g_ptDispOprHead;
-	while (ptTmp->next)
+	while (ptTmp)
 	{
 		printf("%02d. DispOpr: %s.\n", i++, ptTmp->name);
 		ptTmp = ptTmp->next;
@@ -80,9 +81,9 @@ PT_DispOpr GetDispOpr(char *pcname)
 		printf("pcname error\n");
 		return NULL;
 	}
-	PT_PicFilePraser ptTmp = NULL;
+	PT_DispOpr ptTmp = NULL;
 	ptTmp = g_ptDispOprHead;
-	while(ptTmp->next)
+	while(ptTmp)
 	{
 		if (!strcmp(ptTmp->name, pcname))
 			return ptTmp;
@@ -220,6 +221,7 @@ int AllocVideoMem(int iNum)
 	return 0;
 }
 
+
 /**********************************************************************
  * 函数名称： GetVideoMem
  * 功能描述： 获得一块可操作的VideoMem(它用于存储要显示的数据), 
@@ -287,5 +289,20 @@ PT_VideoMem GetVideoMem(int iID, int bCur)
 	return NULL;
 }
 
+/**********************************************************************
+ * 函数名称： ClearVideoMem
+ * 功能描述： 把VideoMem中内存全部清为某种颜色
+ * 输入参数： ptVideoMem - VideoMem结构体指针, 内含要操作的内存
+ *            dwColor    - 设置为该颜色
+ * 输出参数： 无
+ * 返 回 值： 无
+ * 修改日期        版本号     修改人	      修改内容
+ * -----------------------------------------------
+ * 2013/02/08	     V1.0	  韦东山	      创建
+ ***********************************************************************/
+void ClearVideoMem(PT_VideoMem ptVideoMem, unsigned int dwColor)
+{
+
+}
 
 

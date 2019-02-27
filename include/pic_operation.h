@@ -34,7 +34,7 @@ typedef struct
 	unsigned long    biClrImportant;//　　　　 //对图象显示有重要影响的索引数，0都重要。 
 } __attribute__((packed)) BitMapInfoHeader;// 
 
-
+/* 注意: unsigned char *pucPixelDatas  使用之前需要先malloc，使用后要free*/
 typedef struct PixelDatas{
 	int iWidth;			/**/
 	int iHeight;

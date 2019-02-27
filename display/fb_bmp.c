@@ -108,7 +108,7 @@ static int CoverOneLine(int Number, unsigned char *pucSrcDatas,
  * 函数名称： GetPixelDatasFrmBMP
  * 功能描述： 把BMP文件中的象素数据,取出并转换为能在显示设备上使用的格式
  * 输入参数： ptFileMap    - 内含文件信息
- * 输出参数： ptPixelDatas - 内含象素数据
+ * 输出参数： ptPixelDatas - 内含象素数据,函数中会为PT_PixelDatas 中的 *pucPixelDatas 进行malloc,获得内存。
  *            ptPixelDatas->iBpp 是输入的参数, 它确定从BMP文件得到的数据要转换为该BPP
  * 返 回 值： 0 - 成功, 其他值 - 失败
  ***********************************************************************/
@@ -146,8 +146,10 @@ static int GetPixelDatasFrmBMP(PT_FileMap ptFileMap, PT_PixelDatas ptPixelDatas)
 	ptPixelDatas->iWidth  = iWidth;
 	//ptPixelDatas->ibpp    = ibpp;  /*这里是设备的bpp，应该在本函数之外定义。*/
 	ptPixelDatas->iLineByte = iWidth * ptPixelDatas->ibpp / 8;  
+	debug("ptPixelDatas->ibpp = %d.\n", ptPixelDatas->ibpp);
 	ptPixelDatas->iTotalByte = ptPixelDatas->iLineByte * iHeight;
-
+	debug("ptPixelDatas->iTotalByte = %d.\n", ptPixelDatas->iTotalByte);
+	
 	ptPixelDatas->pucPixelDatas = malloc(ptPixelDatas->iTotalByte);
 	if(NULL == ptPixelDatas->pucPixelDatas)
 	{

@@ -3,6 +3,7 @@
 
 #include <config.h>
 #include <pic_operation.h>
+#include <disp_manager.h>
 // 宏定义
 #define FBDEVICE	"/dev/fb0"
 
@@ -145,6 +146,18 @@ int AllocVideoMem(int iNum);
  ***********************************************************************/
 PT_VideoMem GetVideoMem(int iID, int bCur);
 
+/**********************************************************************
+ * 函数名称： ClearVideoMem
+ * 功能描述： 把VideoMem中内存全部清为某种颜色
+ * 输入参数： ptVideoMem - VideoMem结构体指针, 内含要操作的内存
+ *            dwColor    - 设置为该颜色
+ * 输出参数： 无
+ * 返 回 值： 无
+ * 修改日期        版本号     修改人	      修改内容
+ * -----------------------------------------------
+ * 2013/02/08	     V1.0	  韦东山	      创建
+ ***********************************************************************/
+void ClearVideoMem(PT_VideoMem ptVideoMem, unsigned int dwColor);
 
 
 

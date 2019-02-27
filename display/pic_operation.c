@@ -70,7 +70,7 @@ int PicMerge(int iX, int iY, PT_PixelDatas ptSmallPic, PT_PixelDatas ptBigPic)
  *            "近邻取样插值"的原理请参考网友"lantianyu520"所著的"图像缩放算法"
  * 输入参数： ptOriginPic - 内含原始图片的象素数据
  *            ptZoomPic    - 内含缩放后的图片的象素数据
- * 输出参数： 无
+ * 输出参数： ptZoomPic->pucPixelFatas - 内含缩放后的图片的象素数据
  * 返 回 值： 0 - 成功, 其他值 - 失败
  ***********************************************************************/
 int PicZoom(PT_PixelDatas ptOriginPic, PT_PixelDatas ptZoomPic)

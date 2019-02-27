@@ -9,6 +9,7 @@
 #include <file.h>
 #include <pic_manager.h>
 #include <input_manager.h>
+#include <page_manager.h>
 
 char rgb_buf[RGB_BUF_SIZE];
 
@@ -40,7 +41,7 @@ int main(void)
 	tPixelDatas.ibpp = iDefaultDispBpp;
 	tSmallPixelDatas.ibpp = iDefaultDispBpp;
 	tZoomPixelDatas.ibpp = iDefaultDispBpp;
-	
+	debug("iDefaultDispBpp = %d\n", iDefaultDispBpp);
 	
 /*注册并初始化图片解析模块*/	
 	PicPraserInit();
@@ -75,6 +76,8 @@ int main(void)
 	GetDefaultDispOpr()->ShowPixel(&tZoomPixelDatas);
 	free(tZoomPixelDatas.pucPixelDatas);
 
+	MainPageRun();
+#if 0
 /*实验jpg格式图片*/
 	snprintf(tFileMap.strFileName, 128, "%s", strJpgName);
 	tFileMap.strFileName[127] = '\0';
@@ -84,7 +87,7 @@ int main(void)
 	}
 	PicPraser("jpg")->GetPixelDatas(&tFileMap, &tPixelDatas);
 	//GetDefaultDispOpr()->ShowPixel(&tPixelDatas);
-#if 0
+
 /*实验jpg格式图片*/
 	snprintf(tFileMap.strFileName, 128, "%s", strSmallJpgName);
 	tFileMap.strFileName[127] = '\0';
@@ -98,9 +101,9 @@ int main(void)
 #endif
 
 /*测试触摸屏函数*/
-	T_InputEvent tInputEvent;
-	TSDevInit();
-	TSGetInputEvent(&tInputEvent);
+	//T_InputEvent tInputEvent;
+	//TSDevInit();
+	//TSGetInputEvent(&tInputEvent);
 /****************************************************************************/
 /*
 	picture_scan("./image");
@@ -111,7 +114,7 @@ int main(void)
 	}
 	
 	*/
-	GetDefaultDispOpr()->DeviceClose();
+	//GetDefaultDispOpr()->DeviceClose();
 
 	return 0;
 }

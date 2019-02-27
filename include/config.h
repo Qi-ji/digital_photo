@@ -18,9 +18,12 @@
 
 /***************************macro definition*************************************/
 
+#define ICON_PATH "/opt/icons/"
+
 //The picture's max resolution is 1096*1086,and the bpp is 24.
 #define PIC_MAX_RESOLUTION  	(1096*1080)
 #define RGB_BUF_SIZE			(PIC_MAX_RESOLUTION * 3)
+
 
 
 extern char rgb_buf[RGB_BUF_SIZE];

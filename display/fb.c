@@ -52,7 +52,6 @@ static int FBInit(void)
 {
 	int ret = -1;
 	
-	
 	struct fb_fix_screeninfo FBFixInfo;
 	struct fb_var_screeninfo FBVarInfo;
 	

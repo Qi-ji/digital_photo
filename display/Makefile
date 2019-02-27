@@ -5,3 +5,4 @@ obj-y += fb_png.o
 obj-y += disp_manager.o
 obj-y += pic_manager.o
 obj-y += pic_operation.o
+obj-y += render.o
