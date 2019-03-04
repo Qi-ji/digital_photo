@@ -1,0 +1,90 @@
+---- bmp_buf Matches (3 in 2 files) ----
+Fb_bmp.c (e:\win_share\project\qzm\album_proj\display):unsigned char bmp_buf[BMP_BUF_SIZE];	//put all the bmp code in bmp_buf 
+Fb_bmp.c (e:\win_share\project\qzm\album_proj\display):	 ret = read(fd, bmp_buf, bmp_date_len);
+Main.c (e:\win_share\project\qzm\album_proj):	picture_showed.pic_date= bmp_buf;
+---- bmp_date Matches (0 in 0 files) ----
+---- fb_open Matches (2 in 2 files) ----
+Disp_manager.h (e:\win_share\project\qzm\album_proj\include):int fb_open(void);
+Main.c (e:\win_share\project\qzm\album_proj):	if ((ret = fb_open())== -1)
+---- fb.h Matches (4 in 4 files) ----
+Fb.c (e:\win_share\project\qzm\album_proj\display):#include <linux/fb.h>
+Fb_bmp.c (e:\win_share\project\qzm\album_proj\display):#include <fb.h>
+Fb_jpeg.c (e:\win_share\project\qzm\album_proj\display):#include <fb.h>
+Main.c (e:\win_share\project\qzm\album_proj):#include <fb.h>
+---- main Matches (1 in 1 files) ----
+Main.c (e:\win_share\project\qzm\album_proj):int main(void)
+---- fb_bmp.h Matches (2 in 2 files) ----
+Fb.c (e:\win_share\project\qzm\album_proj\display):#include <fb_bmp.h>
+Main.c (e:\win_share\project\qzm\album_proj):#include <fb_bmp.h>
+---- bmp_analyze Matches (2 in 1 files) ----
+Fb_bmp.c (e:\win_share\project\qzm\album_proj\display):static int bmp_analyze(pic_info  *pbmp)
+Fb_bmp.c (e:\win_share\project\qzm\album_proj\display):	ret = bmp_analyze(&b_picture);
+---- pic_info Matches (14 in 7 files) ----
+Config.h (e:\win_share\project\qzm\album_proj\include):}pic_info;
+Disp_manager.h (e:\win_share\project\qzm\album_proj\include):void fb_draw_picture_test(pic_info *ppic);
+Disp_manager.h (e:\win_share\project\qzm\album_proj\include):void fb_draw_jpeg_test(pic_info *ppic);
+Disp_manager.h (e:\win_share\project\qzm\album_proj\include):void fb_draw_png(pic_info *ppic);
+Fb.c (e:\win_share\project\qzm\album_proj\display):void fb_draw_picture_test(pic_info *ppic)
+Fb.c (e:\win_share\project\qzm\album_proj\display):void fb_draw_jpeg_test(pic_info *ppic)
+Fb.c (e:\win_share\project\qzm\album_proj\display):void fb_draw_png(pic_info *ppic)
+Fb_bmp.c (e:\win_share\project\qzm\album_proj\display):static int bmp_analyze(pic_info  *pbmp)
+Fb_bmp.c (e:\win_share\project\qzm\album_proj\display):	pic_info b_picture;
+Fb_jpeg.c (e:\win_share\project\qzm\album_proj\display):static int jpg_analyze (pic_info  *pjpeg)
+Fb_jpeg.c (e:\win_share\project\qzm\album_proj\display):	pic_info j_picture;
+Fb_png.c (e:\win_share\project\qzm\album_proj\display):static int png_analyze(pic_info  *ppng)
+Fb_png.c (e:\win_share\project\qzm\album_proj\display):	pic_info p_picture;
+Image_manage.c (e:\win_share\project\qzm\album_proj\manage):struct pic_info picture_info[PICTURE_MAX_NUM];
+---- fb_draw_back Matches (2 in 2 files) ----
+Disp_manager.h (e:\win_share\project\qzm\album_proj\include):void fb_draw_back(unsigned int width, unsigned int height, unsigned int color);
+Fb.c (e:\win_share\project\qzm\album_proj\display):void fb_draw_back(unsigned int width, unsigned int height, unsigned int color)
+---- tBmpFilePraser Matches (3 in 2 files) ----
+Fb_bmp.c (e:\win_share\project\qzm\album_proj\display):T_PicFilePraser tBmpFilePraser = {
+Main.c (e:\win_share\project\qzm\album_proj):extern T_PicFilePraser tBmpFilePraser;
+Main.c (e:\win_share\project\qzm\album_proj):	tBmpFilePraser.GetPixelDatas(&tFileMap, ptPixelDatas);
+---- tBmpFilePraser Matches (3 in 2 files) ----
+Fb_bmp.c (e:\win_share\project\qzm\album_proj\display):T_PicFilePraser tBmpFilePraser = {
+Main.c (e:\win_share\project\qzm\album_proj):extern T_PicFilePraser tBmpFilePraser;
+Main.c (e:\win_share\project\qzm\album_proj):	tBmpFilePraser.GetPixelDatas(&tFileMap, &tPixelDatas);
+---- name=bmp Matches (0 in 0 files) ----
+---- name Matches (7 in 6 files) ----
+Disp_manager.h (e:\win_share\project\qzm\album_proj\include):	char 			*name;				/*显示设备名称*/
+Fb.c (e:\win_share\project\qzm\album_proj\display):	.name = "fb",
+Fb_bmp.c (e:\win_share\project\qzm\album_proj\display):	.name = "bmp",
+Main.c (e:\win_share\project\qzm\album_proj):printf("name = %s\n", tBmpFilePraser.name);
+Pic_manager.c (e:\win_share\project\qzm\album_proj\display):		printf("%02d.PicFilePraser:%s.\n", i++, ptTmp->name);
+Pic_operation.h (e:\win_share\project\qzm\album_proj\include):	char *name;
+---- ShowPicFilePraser Matches (2 in 2 files) ----
+Main.c (e:\win_share\project\qzm\album_proj):	ShowPicFilePraser();
+Pic_manager.h (e:\win_share\project\qzm\album_proj\include): int ShowPicFilePraser(void);
+---- PicFielPraserRegister Matches (0 in 0 files) ----
+---- 11111 Matches (1 in 1 files) ----
+Pic_manager.c (e:\win_share\project\qzm\album_proj\display):	printf("11111\n");
+---- PicPraserRegister Matches (4 in 4 files) ----
+Fb_bmp.c (e:\win_share\project\qzm\album_proj\display):	return PicPraserRegister(&tBmpFilePraser);
+Fb_jpg.c (e:\win_share\project\qzm\album_proj\display):	return PicPraserRegister(&tJpgFilePraser);
+Pic_manager.c (e:\win_share\project\qzm\album_proj\display):int PicPraserRegister(PT_PicFilePraser ptPicFilePraser)
+Pic_manager.h (e:\win_share\project\qzm\album_proj\include):int PicPraserRegister(PT_PicFilePraser ptPicFilePraser);
+---- iLineWidthReal Matches (5 in 1 files) ----
+Fb_bmp.c (e:\win_share\project\qzm\album_proj\display):	int iLineWidthReal;
+Fb_bmp.c (e:\win_share\project\qzm\album_proj\display):	iLineWidthReal = iWidth * ibpp / 8;
+Fb_bmp.c (e:\win_share\project\qzm\album_proj\display):	iLineWidthAlign = (iLineWidthReal + 3) & ~0x3;   /* 向4取整 */
+Fb_bmp.c (e:\win_share\project\qzm\album_proj\display):	printf("iLineWidthReal = %d.\n", iLineWidthReal);
+---- Filesize Matches (1 in 1 files) ----
+File.c (e:\win_share\project\qzm\album_proj\file):	printf("Filesize = %d \n", ptFileMap->iFilesize);
+---- FBCleanScrean Matches (3 in 2 files) ----
+Disp_manager.h (e:\win_share\project\qzm\album_proj\include):void FBCleanScrean(unsigned int color);
+Fb.c (e:\win_share\project\qzm\album_proj\display):	.CleanScreen = FBCleanScrean,
+Fb.c (e:\win_share\project\qzm\album_proj\display):void FBCleanScrean(unsigned int color)
+---- free Matches (5 in 4 files) ----
+Fb_bmp.c (e:\win_share\project\qzm\album_proj\display):	free(ptPixelDatas->pucPixelDatas);
+Fb_jpg.c (e:\win_share\project\qzm\album_proj\display):	free(pucLinebuffer);
+Fb_jpg.c (e:\win_share\project\qzm\album_proj\display):	free(ptPixelDatas->pucPixelDatas);
+Main.c (e:\win_share\project\qzm\album_proj):	free(tZoomPixelDatas.pucPixelDatas);
+Pic_operation.c (e:\win_share\project\qzm\album_proj\display):	free(pucSrcXPixelTable);	
+---- FBInit Matches (3 in 2 files) ----
+Disp_manager.h (e:\win_share\project\qzm\album_proj\include):int FBInit(void);
+Fb.c (e:\win_share\project\qzm\album_proj\display):	.DeviceInit  = FBInit,
+Fb.c (e:\win_share\project\qzm\album_proj\display):int FBInit(void)
+---- MainPageRun Matches (2 in 2 files) ----
+Main.c (e:\win_share\project\qzm\album_proj):	MainPageRun();
+Main_page.c (e:\win_share\project\qzm\album_proj\page):void MainPageRun(void)

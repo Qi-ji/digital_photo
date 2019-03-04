@@ -21,7 +21,8 @@ int main(void)
 	T_PixelDatas tPixelDatas;
 	T_PixelDatas tSmallPixelDatas;
 	T_PixelDatas tZoomPixelDatas;
-	char *strBmpName = "penjurn.bmp";
+	//char *strBmpName = "penjurn.bmp";
+	char *strBmpName = "continue_button.bmp";
 	//char *strJpgName = "motorbike.jpg";
 	char *strJpgName = "girl.jpg";
 	char *strSmallJpgName = "shotting.jpg";
@@ -41,12 +42,14 @@ int main(void)
 	tPixelDatas.ibpp = iDefaultDispBpp;
 	tSmallPixelDatas.ibpp = iDefaultDispBpp;
 	tZoomPixelDatas.ibpp = iDefaultDispBpp;
-	debug("iDefaultDispBpp = %d\n", iDefaultDispBpp);
+
+	AllocVideoMem(5);
 	
 /*注册并初始化图片解析模块*/	
 	PicPraserInit();
 
 /*映射文件并在设备上显示*/
+
 /*实验bmp格式图片*/
 	snprintf(tFileMap.strFileName, 128, "%s", strBmpName);
 	tFileMap.strFileName[127] = '\0';
@@ -57,9 +60,9 @@ int main(void)
 	}
 	
 	GetPicPraser(&tFileMap)->GetPixelDatas(&tFileMap, &tPixelDatas);
-	tZoomPixelDatas.iWidth  = 512;
-	tZoomPixelDatas.iHeight = 300;
 	
+	tZoomPixelDatas.iWidth  = 342;
+	tZoomPixelDatas.iHeight = 121;
 	tZoomPixelDatas.iLineByte = tZoomPixelDatas.iWidth * 4;
 	tZoomPixelDatas.iTotalByte = tZoomPixelDatas.iLineByte * tZoomPixelDatas.iHeight;
 	debug("tZoomPixelDatas.iTotalByte = %d\n", tZoomPixelDatas.iTotalByte);
@@ -71,12 +74,17 @@ int main(void)
 	}
 	
 	PicZoom(&tPixelDatas, &tZoomPixelDatas);
+	//PicMerge(500, 120, &tZoomPixelDatas, &tPixelDatas);
 	//PicPraser("bmp")->GetPixelDatas(&tFileMap, &tPixelDatas);
-	GetDefaultDispOpr()->ShowPixel(&tPixelDatas);
+	//GetDefaultDispOpr()->ShowPixel(&tPixelDatas);
 	GetDefaultDispOpr()->ShowPixel(&tZoomPixelDatas);
 	free(tZoomPixelDatas.pucPixelDatas);
 
-	MainPageRun();
+	//while(1)
+	//{
+		MainPageRun();
+	//}
+	
 #if 0
 /*实验jpg格式图片*/
 	snprintf(tFileMap.strFileName, 128, "%s", strJpgName);

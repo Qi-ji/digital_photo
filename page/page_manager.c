@@ -33,6 +33,7 @@ int GetPageId(char *pcPageName)
  ***********************************************************************/
 int GeneratePage(PT_PageLayout ptPageLayout, PT_VideoMem ptVideoMem)
 {
+debug("***************************star GeneratePage***************************\n");
 	int iError;
 /* 1.生成图标数据(获得图标像素、进行缩放、合并等操作)*/
 	PT_IconLayout atIconLayout;
@@ -42,15 +43,17 @@ int GeneratePage(PT_PageLayout ptPageLayout, PT_VideoMem ptVideoMem)
 
 	if (ptVideoMem->eMemContent != VMC_GENERATE)
 	{
+		ClearVideoMem(ptVideoMem, BLACK);
 		
 		tOriginalPixelDatas.ibpp = ptPageLayout->iBpp; /*bpp 信息需要提前设定*/
 		tZoonPixelDatas.ibpp 	 = ptPageLayout->iBpp; /*bpp 信息需要提前设定*/
 		tZoonPixelDatas.pucPixelDatas = malloc(ptPageLayout->iTotalByte);
 		if (NULL == tZoonPixelDatas.pucPixelDatas)
 			return -1;
-		
+	
 		while (atIconLayout->pcName)
 		{
+debug("***************************star GetPixelFrmIcon***************************\n");
 			/* 获得图标像素数据*/
 			iError = GetPixelFrmIcon(atIconLayout->pcName, &tOriginalPixelDatas);
 			if (iError)
@@ -59,22 +62,32 @@ int GeneratePage(PT_PageLayout ptPageLayout, PT_VideoMem ptVideoMem)
 				free(tZoonPixelDatas.pucPixelDatas);
 				return -1;
 			}
+debug("***************************end GetPixelFrmIcon***************************\n");
+
 			/* 获得缩放后图标像素数据，通过atIconLyout来获得图标的长宽等信息*/
 			tZoonPixelDatas.iHeight 	= atIconLayout->iRightBotY - atIconLayout->iLeftTopY + 1;
 			tZoonPixelDatas.iWidth 		= atIconLayout->iRightBotX - atIconLayout->iLeftTopX + 1;
 			tZoonPixelDatas.iLineByte	= tZoonPixelDatas.iWidth * tZoonPixelDatas.ibpp / 8;
 			tZoonPixelDatas.iTotalByte  = tZoonPixelDatas.iLineByte * tZoonPixelDatas.iHeight;
+debug("***************************start PicZoom***************************\n");
 
+			debug("tZoonPixelDatas.iHeight = %d.\n", tZoonPixelDatas.iHeight);
+			debug("tZoonPixelDatas.iWidth = %d.\n", tZoonPixelDatas.iWidth);
+			debug("tZoonPixelDatas.iLineByte = %d.\n", tZoonPixelDatas.iLineByte);
+			debug("tZoonPixelDatas.iTotalByte = %d.\n", tZoonPixelDatas.iTotalByte);
 			/*缩放图标并合并到显存上*/
 			PicZoom(&tOriginalPixelDatas, &tZoonPixelDatas);
-			PicMerge(atIconLayout->iLeftTopX, atIconLayout->iRightBotY, &tZoonPixelDatas, &ptVideoMem->tPixelDatas);
+debug("***************************end PicZoom***************************\n");
+			PicMerge(atIconLayout->iLeftTopX, atIconLayout->iLeftTopY, &tZoonPixelDatas, &ptVideoMem->tPixelDatas);
 			/* 释放获得图标元数据，并指向下一个图标*/
 			FreePixelFrmIcon(&tOriginalPixelDatas);
 			atIconLayout++;
 		}
 		ptVideoMem->eMemContent = VMC_GENERATE;
 		free(tZoonPixelDatas.pucPixelDatas);
+
 	}
+	debug("***************************end GeneratePage***************************\n");
 	return 0;
 }
 

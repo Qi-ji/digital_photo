@@ -105,7 +105,7 @@ void SetAndInitDefaultDispOpr(char *pcname)
 	if(g_ptDefaultDispOpr)
 	{
 		g_ptDefaultDispOpr->DeviceInit();
-		g_ptDefaultDispOpr->CleanScreen(WHITE);
+		g_ptDefaultDispOpr->CleanScreen(BLACK);
 	}
 }
 
@@ -291,7 +291,7 @@ PT_VideoMem GetVideoMem(int iID, int bCur)
 
 /**********************************************************************
  * 函数名称： ClearVideoMem
- * 功能描述： 把VideoMem中内存全部清为某种颜色
+ * 功能描述： 把VideoMem中内存全部清为某种颜色,方便进行后期图片合并	
  * 输入参数： ptVideoMem - VideoMem结构体指针, 内含要操作的内存
  *            dwColor    - 设置为该颜色
  * 输出参数： 无
@@ -302,7 +302,48 @@ PT_VideoMem GetVideoMem(int iID, int bCur)
  ***********************************************************************/
 void ClearVideoMem(PT_VideoMem ptVideoMem, unsigned int dwColor)
 {
+	unsigned char *pucVMpixel;
+	unsigned short *pucVM16pixel;
+	unsigned int *pucVM32pixel;
+	//int iRed, iGreen, iBlue;
+	int pos = 0;
+	int i;
+	
+	pucVMpixel = ptVideoMem->tPixelDatas.pucPixelDatas;
+	pucVM16pixel = (unsigned short*)pucVMpixel; 
+	pucVM32pixel = (unsigned int*)pucVMpixel; 	
 
+
+	
+	switch(ptVideoMem->tPixelDatas.ibpp)
+	{
+		case 8:
+		{
+			memset(pucVMpixel, dwColor, ptVideoMem->tPixelDatas.iTotalByte);
+			break;
+		}
+		case 16:
+		{
+			break;
+		}
+		case 32:
+		{
+			while(i < ptVideoMem->tPixelDatas.iTotalByte)
+			{
+				*pucVM32pixel = dwColor;
+				pucVM32pixel++;
+				i += 4;
+			}
+			break;
+		}
+		default:
+		{
+			debug("not support this %d bpp.\n", ptVideoMem->tPixelDatas.ibpp)
+			break;
+		}
+
+	}
+	
 }
 
 

@@ -18,7 +18,7 @@
 
 /***************************macro definition*************************************/
 
-#define ICON_PATH "/opt/icons/"
+#define ICON_PATH "/opt/icons"
 
 //The picture's max resolution is 1096*1086,and the bpp is 24.
 #define PIC_MAX_RESOLUTION  	(1096*1080)

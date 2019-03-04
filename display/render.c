@@ -25,12 +25,11 @@ int GetPixelFrmIcon(char *pcName, PT_PixelDatas ptPixelDatas)
 	T_FileMap tIconFileMap;
 
 	/* FileMap 打开图标*/
-	sprintf(tIconFileMap.strFileName, 128, "%s/%s", ICON_PATH, pcName);
+	snprintf(tIconFileMap.strFileName, 128, "%s/%s", ICON_PATH, pcName);
 	tIconFileMap.strFileName[127] = '\0';
 	ierror = MapFile(&tIconFileMap);
 	if(ierror)
 		return -1;
-
 	/* 图片解析器解析图标 */
 	ierror = PicPraser("bmp")->isSupport(&tIconFileMap);
 	if(!ierror)
@@ -46,6 +45,12 @@ int GetPixelFrmIcon(char *pcName, PT_PixelDatas ptPixelDatas)
 		UnMapFile(&tIconFileMap);
 		return -1;
 	}
+
+debug("Icon original iWidth = %d.\n",ptPixelDatas->iWidth);
+debug("Icon original iHeight = %d.\n",ptPixelDatas->iHeight);
+debug("Icon original iLineByte = %d.\n",ptPixelDatas->iLineByte);
+debug("Icon original iTotalByte = %d.\n",ptPixelDatas->iTotalByte);
+
 	
 	UnMapFile(&tIconFileMap);
 	return 0;
@@ -76,11 +81,13 @@ void FreePixelFrmIcon(PT_PixelDatas ptPixelDatas)
  ***********************************************************************/
 void FlushVideoMemToDev(PT_VideoMem ptVideoMem)
 {
-	//memcpy(GetDefaultDispDev()->pucDispMem, ptVideoMem->tPixelDatas.aucPixelDatas, ptVideoMem.tPixelDatas.iHeight * ptVideoMem.tPixelDatas.iLineBytes);
+	//memcpy((unsigned char *)(GetDefaultDispOpr()->pdwDispMem), ptVideoMem->tPixelDatas.pucPixelDatas, ptVideoMem.tPixelDatas.iHeight * ptVideoMem.tPixelDatas.iLineByte);
+
 	if (!ptVideoMem->bFBDev)
 	{
-		GetDefaultDispOpr()->ShowOnePage(ptVideoMem);
+		GetDefaultDispOpr()->ShowPixel(&ptVideoMem->tPixelDatas);
 	}
+	
 }
 
 
