@@ -18,21 +18,7 @@
 
 #define GREENP		0x0000ff00			// 一样，说明前2个ff透明位不起作用
 
-typedef struct DispOpr{
-	char 			*name;				/*显示设备名称*/
-	int  			iXres;				/*X方向分辨率*/
-	int  			iYres;				/*X方向分辨率*/
-	int				ibpp;
-	int				iMemTotalByte;
-	unsigned int 	*pdwDispMem; 		/*mmap 获得的显存地址*/
-	int(*DeviceInit)(void);
-	int(*DeviceClose)(void);
-	int(*ShowOnePiexl)(void);
-	void(*CleanScreen)(unsigned int icolor);
-	int (*ShowPixel)(PT_PixelDatas ptPixelDatas);
-	int(*ShowOnePage)(PT_PixelDatas ptPixelDatas);
-	struct DispOpr *next;
-}T_DispOpr, *PT_DispOpr;
+
 
 typedef enum {
 	VMS_FREE = 0,		/*该缓存空闲*/
@@ -56,6 +42,21 @@ typedef struct VideoMem{
 	struct VideoMem *ptNext;
 }T_VideoMem, *PT_VideoMem;
 
+typedef struct DispOpr{
+	char 			*name;				/*显示设备名称*/
+	int  			iXres;				/*X方向分辨率*/
+	int  			iYres;				/*X方向分辨率*/
+	int				ibpp;
+	int				iMemTotalByte;
+	unsigned int 	*pdwDispMem; 		/*mmap 获得的显存地址*/
+	int(*DeviceInit)(void);
+	int(*DeviceClose)(void);
+	int(*ShowOnePiexl)(void);
+	void(*CleanScreen)(unsigned int icolor);
+	int (*ShowPixel)(PT_PixelDatas ptPixelDatas);
+	int(*ShowOnePage)(PT_VideoMem ptVideoMem);
+	struct DispOpr *next;
+}T_DispOpr, *PT_DispOpr;
 
 /**********************************************************************
  * 函数名称： DispOprRegister

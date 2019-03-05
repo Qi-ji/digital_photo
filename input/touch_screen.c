@@ -8,7 +8,7 @@
 #include <input_manager.h>
 #include <config.h>
 
-int g_TSfd;
+static int g_TSfd;		/*触摸屏设备fd*/
 
 /**********************************************************************
  * 函数名称： TSDevInit
@@ -20,9 +20,7 @@ int g_TSfd;
  ***********************************************************************/
 int TSDevInit(void)
 {
-	
-	/*1.打开设备*/
-	
+	/*1.打开设备*/	
 	g_TSfd = open(TOUCHSCREENDEV, O_RDONLY);
 	if (g_TSfd < 0)
 	{
@@ -94,7 +92,7 @@ int TSGetInputEvent(PT_InputEvent ptInputEvent)
 
 		debug("X = %d, Y = %d, iType = %d, iPressur = %d.\n",ptInputEvent->iX, ptInputEvent->iY, ptInputEvent->iType, ptInputEvent->iPressure);
 		//return 0;   /*这点不清楚为什么要这样*/
-		if(i++ == 2)
+		//if(i++ == 2)
 			return 0;
 	}
 	return 0;   /*这点不清楚为什么要这样*/
@@ -114,7 +112,7 @@ T_InputOpr g_tTSOpr = {
  ***********************************************************************/
 int TouchScreenInit(void)
 {
-	//return InputOprtRegister(&g_ptTSOpr);
+	return InputOprtRegister(&g_tTSOpr);
 }
 
 

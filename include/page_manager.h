@@ -3,6 +3,7 @@
 
 #include <disp_manager.h>
 #include <page_manager.h>
+#include <input_manager.h>
 
 
 /*页面上图标区域位置结构体*/
@@ -30,6 +31,15 @@ typedef struct PageLayout
 	PT_IconLayout atIconLayout; 
 }T_PageLayout, *PT_PageLayout;
 
+/*页面操作结构体*/
+typedef struct PageAction {
+	char *name;            /* 页面名字 */
+	//void (*Run)(PT_PageParams ptParentPageParams);  /* 页面的运行函数 */
+	void (*Run)(void); 
+	int (*GetInputEvent)(PT_PageLayout ptPageLayout, PT_InputEvent ptInputEvent);  /* 获得输入数据的函数 */
+	int (*Prepare)(void);         /* (未实现)后台准备函数: 为加快程序运行而同时处理某些事情 */
+	struct PageAction *ptNext;    /* 链表 */
+}T_PageAction, *PT_PageAction;
 
 /**********************************************************************
  * 函数名称： GetPageId
@@ -62,6 +72,16 @@ int GeneratePage(PT_PageLayout ptPageLayout, PT_VideoMem ptVideoMem);
  * 2013/02/08	     V1.0	  韦东山	      创建
  ***********************************************************************/
 void MainPageRun(void);
+
+/**********************************************************************
+ * 函数名称： GenericGetInputEvent
+ * 功能描述： 读取输入数据,并判断它位于哪一个图标上
+ * 输入参数： ptPageLayout - 内含多个图标的显示区域
+ * 输出参数： ptInputEvent - 内含得到的输入数据
+ * 返 回 值： -1     - 输入数据不位于任何一个图标之上
+ *            其他值 - 输入数据所落在的图标(PageLayout->atLayout数组的哪一项)
+ ***********************************************************************/
+int GenericGetInputEvent(PT_PageLayout ptPageLayout, PT_InputEvent ptInputEvent);
 
 
 #endif 

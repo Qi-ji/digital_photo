@@ -7,6 +7,7 @@
 #include <pic_operation.h>
 #include <page_manager.h>
 #include <render.h>
+#include <input_manager.h>
 
 
 
@@ -91,5 +92,58 @@ debug("***************************end PicZoom***************************\n");
 	return 0;
 }
 
+
+/**********************************************************************
+ * 函数名称： GenericGetInputEvent
+ * 功能描述： 读取输入数据,并判断它位于哪一个图标上
+ * 输入参数： ptPageLayout - 内含多个图标的显示区域
+ * 输出参数： ptInputEvent - 内含得到的输入数据
+ * 返 回 值： -1     - 输入数据不位于任何一个图标之上
+ *            其他值 - 输入数据所落在的图标(PageLayout->atLayout数组的哪一项)
+ ***********************************************************************/
+int GenericGetInputEvent(PT_PageLayout ptPageLayout, PT_InputEvent ptInputEvent)
+{
+	T_InputEvent tInputEvent;
+	int iRet;
+	int i = 0;
+	PT_IconLayout atIconLayout = ptPageLayout->atIconLayout; /*指向图标数组*/
+	
+	/* 获得原始的触摸屏数据 
+	 * 它是调用input_manager.c的函数，此函数会让当前线否休眠
+	 * 当触摸屏线程获得数据后，会把它唤醒
+	 */
+	iRet = GetInputEvent(&tInputEvent);
+	if (iRet)
+	{
+		return -1;
+	}
+
+	if (tInputEvent.iType != TOUCHSCREEN)
+	{
+		return -1;
+	}
+
+	*ptInputEvent = tInputEvent;
+	
+	/* 处理数据 */
+	/* 确定触点位于哪一个按钮上 */
+	while (atIconLayout[i].pcName)
+	{
+		if ((tInputEvent.iX >= atIconLayout[i].iLeftTopX) && (tInputEvent.iX <= atIconLayout[i].iRightBotX) && \
+			 (tInputEvent.iY >= atIconLayout[i].iLeftTopY) && (tInputEvent.iY <= atIconLayout[i].iRightBotY))
+		{
+			debug("\nthe index is %d\n", i);
+			/* 找到了被点中的按钮 */
+			return i;
+		}
+		else
+		{
+			i++;
+		}			
+	}
+
+	/* 触点没有落在按钮上 */
+	return -1;
+}
 
 

@@ -22,7 +22,7 @@ CFLAGS += -I $(shell pwd)/include
 CFLAGS += -I/opt/libdecode/include
 
 # 链接器的链接参数设置
-LDFLAGS := -ljpeg -lz -lpng -L/opt/libdecode/lib
+LDFLAGS := -ljpeg -lz -lpng -lpthread -L/opt/libdecode/lib
 
 export CFLAGS LDFLAGS
 

@@ -85,7 +85,8 @@ void FlushVideoMemToDev(PT_VideoMem ptVideoMem)
 
 	if (!ptVideoMem->bFBDev)
 	{
-		GetDefaultDispOpr()->ShowPixel(&ptVideoMem->tPixelDatas);
+		//GetDefaultDispOpr()->ShowPixel(&ptVideoMem->tPixelDatas);
+		GetDefaultDispOpr()->ShowOnePage(ptVideoMem);
 	}
 	
 }

@@ -43,8 +43,9 @@ int main(void)
 	tSmallPixelDatas.ibpp = iDefaultDispBpp;
 	tZoomPixelDatas.ibpp = iDefaultDispBpp;
 
-	AllocVideoMem(5);
-	
+	AllocVideoMem(5);		/*为显示页面申请内存*/
+	AllInputRegister(); 	    /*所有输入设备进行链表注册*/
+	AllInputOprInit();		/*所有输入设备进行初始化以及开启线程,开启输入事件线程，等待是否有输入事件发生(触摸屏输入)*/
 /*注册并初始化图片解析模块*/	
 	PicPraserInit();
 
@@ -84,6 +85,7 @@ int main(void)
 	//{
 		MainPageRun();
 	//}
+/*测试触摸屏函数*/
 	
 #if 0
 /*实验jpg格式图片*/
@@ -108,10 +110,7 @@ int main(void)
 	//GetDefaultDispOpr()->ShowOnePage(&tPixelDatas);
 #endif
 
-/*测试触摸屏函数*/
-	//T_InputEvent tInputEvent;
-	//TSDevInit();
-	//TSGetInputEvent(&tInputEvent);
+
 /****************************************************************************/
 /*
 	picture_scan("./image");

@@ -28,7 +28,7 @@ static unsigned long g_FBScreenSize = 0;
 static int FBInit(void);
 static int FBClose(void);
 static void FBCleanScrean(unsigned int color);
-static int FBShowPage(PT_PixelDatas ptPixelDatas);
+static int FBShowPage(PT_VideoMem ptVideoMem);
 static int FBShowPixel(PT_PixelDatas ptPixelDatas);
 
 
@@ -196,20 +196,9 @@ static int FBShowPixel(PT_PixelDatas ptPixelDatas)
  * 输出参数： 
  * 返 回 值： 
  **********************************************************************/
-static int FBShowPage(PT_PixelDatas ptPixelDatas)
+static int FBShowPage(PT_VideoMem ptVideoMem)
 {
-	int iTotal;
-
-	if (ptPixelDatas->iTotalByte > g_tFBOpr.iMemTotalByte)
-	{
-		iTotal =  g_tFBOpr.iMemTotalByte;
-	}
-	else
-	{
-		iTotal = ptPixelDatas->iTotalByte;
-	}
-	
-	memcpy(g_pFBMem, ptPixelDatas->pucPixelDatas, iTotal);
+	memcpy(g_pFBMem, ptVideoMem->tPixelDatas.pucPixelDatas, ptVideoMem->tPixelDatas.iTotalByte);
 	return 0;
 }
 

@@ -2,6 +2,8 @@
 
 #include <disp_manager.h>
 #include <page_manager.h>
+#include <render.h>
+
 
 static T_IconLayout g_atMainPageIconLayout[] = {
 	{0,0,0,0,"browse_button.bmp"},
@@ -150,6 +152,21 @@ static void MainPageShow(PT_PageLayout ptMainPageLayout)
 
 }
 
+/**********************************************************************
+ * 函数名称： MainPageGetInputEvent
+ * 功能描述： 为"主页面"获得输入数据,判断输入事件位于哪一个图标上
+ * 输入参数： ptPageLayout - 内含多个图标的显示区域
+ * 输出参数： ptInputEvent - 内含得到的输入数据
+ * 返 回 值： -1     - 输入数据不位于任何一个图标之上
+ *            其他值 - 输入数据所落在的图标(PageLayout->atLayout数组的哪一项)
+ * 修改日期        版本号     修改人	      修改内容
+ * -----------------------------------------------
+ * 2013/02/08	     V1.0	  韦东山	      创建
+ ***********************************************************************/
+static int MainPageGetInputEvent(PT_PageLayout ptPageLayout, PT_InputEvent ptInputEvent)
+{
+	return GenericGetInputEvent(ptPageLayout, ptInputEvent);
+}
 
 /**********************************************************************
  * 函数名称： MainPageRun
@@ -163,15 +180,51 @@ static void MainPageShow(PT_PageLayout ptMainPageLayout)
  ***********************************************************************/
 void MainPageRun(void)
 {
+	int iIndex;
+	T_InputEvent tInputEvent;
 	/*显示页面*/
 	MainPageShow(&g_tPageLayout);
 
 	/*准备子线程，预放下一页面*/
 
 	/*获得触摸屏的输入事件*/
+	while(1)
+	{
+		/*获得触摸屏触摸的图标下标*/
+		iIndex = GenericGetInputEvent(&g_tPageLayout, &tInputEvent);
 
+		switch (iIndex)
+		{
+			case 0:
+			{
+				debug("you press the first button\n");
+				return 0;
+			}
+			case 1:
+			{
+				debug("you press the second button\n");
+				return 0;
+			}
+			case 2:
+			{
+				debug("you press the third button\n");
+				picture_scan("./image");
+
+				while(1)
+				{
+					picture_display();
+				}
+				return 0;
+			}
+		}
+	}
 }
 
+T_PageAction g_tMainPageAction = {
+	.name 			= "mainpage",
+	.Run 			= MainPageRun,
+	.GetInputEvent 	= MainPageGetInputEvent,
+};
 
 
 
