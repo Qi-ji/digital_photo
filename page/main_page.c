@@ -109,9 +109,6 @@ static int  CalcMainPageLayout(PT_PageLayout ptPageLayout)
  * 输入参数： 无
  * 输出参数： 无
  * 返 回 值： 无
- * 修改日期        版本号     修改人	      修改内容
- * -----------------------------------------------
- * 2013/02/08	     V1.0	  韦东山	      创建
  ***********************************************************************/
 static void MainPageShow(PT_PageLayout ptMainPageLayout)
 {
@@ -159,9 +156,6 @@ static void MainPageShow(PT_PageLayout ptMainPageLayout)
  * 输出参数： ptInputEvent - 内含得到的输入数据
  * 返 回 值： -1     - 输入数据不位于任何一个图标之上
  *            其他值 - 输入数据所落在的图标(PageLayout->atLayout数组的哪一项)
- * 修改日期        版本号     修改人	      修改内容
- * -----------------------------------------------
- * 2013/02/08	     V1.0	  韦东山	      创建
  ***********************************************************************/
 static int MainPageGetInputEvent(PT_PageLayout ptPageLayout, PT_InputEvent ptInputEvent)
 {
@@ -174,14 +168,18 @@ static int MainPageGetInputEvent(PT_PageLayout ptPageLayout, PT_InputEvent ptInp
  * 输入参数： 无
  * 输出参数： 无
  * 返 回 值： 无
- * 修改日期        版本号     修改人	      修改内容
- * -----------------------------------------------
- * 2013/02/08	     V1.0	  韦东山	      创建
  ***********************************************************************/
-void MainPageRun(void)
+//void MainPageRun(PT_PageParams ptParentPageParams)
+int MainPageRun(PT_PageParams ptParentPageParams)
+
 {
 	int iIndex;
 	T_InputEvent tInputEvent;
+	T_PageParams tPageParams;
+
+	tPageParams.iPageID = GetPageId("mainpage");
+
+	
 	/*显示页面*/
 	MainPageShow(&g_tPageLayout);
 
@@ -195,17 +193,18 @@ void MainPageRun(void)
 
 		switch (iIndex)
 		{
-			case 0:
+			case 0:			/*浏览文件夹*/
 			{
 				debug("you press the first button\n");
+				GetPage("browsepage")->Run(&tPageParams);		/*输入参数是为了判断由哪个页面进入的*/	
 				return 0;
 			}
-			case 1:
+			case 1:			/*图片连播*/
 			{
 				debug("you press the second button\n");
 				return 0;
 			}
-			case 2:
+			case 2:			/*设置*/
 			{
 				debug("you press the third button\n");
 				picture_scan("./image");
@@ -226,6 +225,18 @@ T_PageAction g_tMainPageAction = {
 	.GetInputEvent 	= MainPageGetInputEvent,
 };
 
+/**********************************************************************
+ * 函数名称： MainPageInit
+ * 功能描述： 注册"主页面"
+ * 输入参数： 无
+ * 输出参数： 无
+ * 返 回 值： 0 - 成功, 其他值 - 失败
+ * 修改日期        版本号     修改人	      修改内容
+ ***********************************************************************/
+int MainPageInit(void)
+{
+	return PageActionRegister(&g_tMainPageAction);
+}
 
 
 

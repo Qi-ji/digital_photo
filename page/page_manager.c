@@ -10,6 +10,39 @@
 #include <input_manager.h>
 
 
+PT_PageAction g_ptPageActionHead;
+
+
+/**********************************************************************
+ * 函数名称： RegisterPageAction
+ * 功能描述： 注册"页面模块", "页面模块"含有页面显示的函数
+ * 输入参数： ptPageAction - 一个结构体,内含"页面模块"的操作函数
+ * 输出参数： 无
+ * 返 回 值： 0 - 成功, 其他值 - 失败
+ * 修改日期        版本号     修改人	      修改内容
+ ***********************************************************************/
+int PageActionRegister(PT_PageAction ptPageAction)
+{
+	PT_PageAction ptTmp;
+
+	if (!g_ptPageActionHead)
+	{
+		g_ptPageActionHead   = ptPageAction;
+		ptPageAction->ptNext = NULL;
+	}
+	else
+	{
+		ptTmp = g_ptPageActionHead;
+		while (ptTmp->ptNext)
+		{
+			ptTmp = ptTmp->ptNext;
+		}
+		ptTmp->ptNext	  = ptPageAction;
+		ptPageAction->ptNext = NULL;
+	}
+
+	return 0;
+}
 
 /**********************************************************************
  * 函数名称： GetPageId
@@ -146,4 +179,43 @@ int GenericGetInputEvent(PT_PageLayout ptPageLayout, PT_InputEvent ptInputEvent)
 	return -1;
 }
 
+
+/**********************************************************************
+ * 函数名称： GetPage
+ * 功能描述： 根据名字取出指定的"页面模块"
+ * 输入参数： pcName - 名字
+ * 输出参数： 无
+ * 返 回 值： NULL   - 失败,没有指定的模块, 
+ *            非NULL - "页面模块"的PT_PageAction结构体指针
+ ***********************************************************************/
+PT_PageAction GetPage(char *pcName)
+{
+	PT_PageAction ptTmp = g_ptPageActionHead;
+	
+	while (ptTmp)
+	{
+		if (strcmp(ptTmp->name, pcName) == 0)
+		{
+			return ptTmp;
+		}
+		ptTmp = ptTmp->ptNext;
+	}
+	return NULL;
+}
+
+/**********************************************************************
+ * 函数名称： PagesInit
+ * 功能描述： 调用各个"页面模块"的初始化函数,就是注册它们
+ * 输入参数： 无
+ * 输出参数： 无
+ * 返 回 值： 0 - 成功, 其他值 - 失败
+ ***********************************************************************/
+int PagesInit(void)
+{
+	int iError;
+
+	iError  = MainPageInit();
+	iError |= BrowsePageInit();
+	return iError;
+}
 

@@ -160,7 +160,7 @@ static int FBShowPixel(PT_PixelDatas ptPixelDatas)
 	int iLineByteSm, iHeightSm;		/*fb 与 pic 中较小的那个iLinebyte 与 iHeight*/
 	int iFBXres, iFBYres, iFBBpp;
 	int iFBLineByte;
-	int i,y;
+	int y;
 
 	pucSrc = ptPixelDatas->pucPixelDatas;
 	pucDst = (unsigned char*)g_pFBMem;

@@ -306,8 +306,7 @@ void ClearVideoMem(PT_VideoMem ptVideoMem, unsigned int dwColor)
 	unsigned short *pucVM16pixel;
 	unsigned int *pucVM32pixel;
 	//int iRed, iGreen, iBlue;
-	int pos = 0;
-	int i;
+	int i = 0;
 	
 	pucVMpixel = ptVideoMem->tPixelDatas.pucPixelDatas;
 	pucVM16pixel = (unsigned short*)pucVMpixel; 

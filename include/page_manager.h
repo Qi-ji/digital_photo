@@ -27,19 +27,35 @@ typedef struct PageLayout
 	int iHeight;
 	int iBpp;
 	int iTotalByte;	/*在描绘时是每个图片以此进行描画并合并到内存上，所以这个变量记录该页面上最大的那个图标的总大小*/
-	
 	PT_IconLayout atIconLayout; 
 }T_PageLayout, *PT_PageLayout;
 
+
+typedef struct PageParams {
+    int  iPageID;                  /* 页面的ID */
+    char strCurPictureFile[256];  /* 要处理的第1个图片文件 */
+}T_PageParams, *PT_PageParams;
+
+
 /*页面操作结构体*/
 typedef struct PageAction {
-	char *name;            /* 页面名字 */
-	//void (*Run)(PT_PageParams ptParentPageParams);  /* 页面的运行函数 */
-	void (*Run)(void); 
-	int (*GetInputEvent)(PT_PageLayout ptPageLayout, PT_InputEvent ptInputEvent);  /* 获得输入数据的函数 */
-	int (*Prepare)(void);         /* (未实现)后台准备函数: 为加快程序运行而同时处理某些事情 */
-	struct PageAction *ptNext;    /* 链表 */
+	char 	*name;            							/* 页面名字 */
+	int	(*Run)(PT_PageParams ptParentPageParams);  	/* 页面的运行函数 */ 
+	int 	(*GetInputEvent)(PT_PageLayout ptPageLayout, PT_InputEvent ptInputEvent);  /* 获得输入数据的函数 */
+	int 	(*Prepare)(void);        						 /* (未实现)后台准备函数: 为加快程序运行而同时处理某些事情 */
+	struct PageAction *ptNext;    						 /* 链表 */
 }T_PageAction, *PT_PageAction;
+
+
+/**********************************************************************
+ * 函数名称： RegisterPageAction
+ * 功能描述： 注册"页面模块", "页面模块"含有页面显示的函数
+ * 输入参数： ptPageAction - 一个结构体,内含"页面模块"的操作函数
+ * 输出参数： 无
+ * 返 回 值： 0 - 成功, 其他值 - 失败
+ * 修改日期        版本号     修改人	      修改内容
+ ***********************************************************************/
+int PageActionRegister(PT_PageAction ptPageAction);
 
 /**********************************************************************
  * 函数名称： GetPageId
@@ -67,11 +83,9 @@ int GeneratePage(PT_PageLayout ptPageLayout, PT_VideoMem ptVideoMem);
  * 输入参数： 无
  * 输出参数： 无
  * 返 回 值： 无
- * 修改日期        版本号     修改人	      修改内容
- * -----------------------------------------------
- * 2013/02/08	     V1.0	  韦东山	      创建
  ***********************************************************************/
-void MainPageRun(void);
+int MainPageRun(PT_PageParams ptParentPageParams);
+
 
 /**********************************************************************
  * 函数名称： GenericGetInputEvent
@@ -82,6 +96,44 @@ void MainPageRun(void);
  *            其他值 - 输入数据所落在的图标(PageLayout->atLayout数组的哪一项)
  ***********************************************************************/
 int GenericGetInputEvent(PT_PageLayout ptPageLayout, PT_InputEvent ptInputEvent);
+
+/**********************************************************************
+ * 函数名称： GetPage
+ * 功能描述： 根据名字取出指定的"页面模块"
+ * 输入参数： pcName - 名字
+ * 输出参数： 无
+ * 返 回 值： NULL   - 失败,没有指定的模块, 
+ *            非NULL - "页面模块"的PT_PageAction结构体指针
+ ***********************************************************************/
+PT_PageAction GetPage(char *pcName);
+
+/**********************************************************************
+ * 函数名称： MainPageInit
+ * 功能描述： 注册"主页面"
+ * 输入参数： 无
+ * 输出参数： 无
+ * 返 回 值： 0 - 成功, 其他值 - 失败
+ ***********************************************************************/
+int MainPageInit(void);
+
+/**********************************************************************
+ * 函数名称： MainPageInit
+ * 功能描述： 注册"主页面"
+ * 输入参数： 无
+ * 输出参数： 无
+ * 返 回 值： 0 - 成功, 其他值 - 失败
+ * 修改日期        版本号     修改人	      修改内容
+ ***********************************************************************/
+int BrowsePageInit(void);
+
+/**********************************************************************
+ * 函数名称： PagesInit
+ * 功能描述： 调用各个"页面模块"的初始化函数,就是注册它们
+ * 输入参数： 无
+ * 输出参数： 无
+ * 返 回 值： 0 - 成功, 其他值 - 失败
+ ***********************************************************************/
+int PagesInit(void);
 
 
 #endif 
