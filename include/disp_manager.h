@@ -15,8 +15,9 @@
 #define RED			0xffff0000
 #define GREEN		0xff00ff00			// test ok
 #define BLUE		0xff0000ff			
+#define COLOR_BACKGROUND   0xE7DBB5  /* 泛黄的纸 */
+#define COLOR_FOREGROUND   0x514438  /* 褐色字体 */
 
-#define GREENP		0x0000ff00			// 一样，说明前2个ff透明位不起作用
 
 
 

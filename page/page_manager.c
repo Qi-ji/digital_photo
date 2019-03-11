@@ -81,7 +81,7 @@ debug("***************************star GeneratePage***************************\n
 		
 		tOriginalPixelDatas.ibpp = ptPageLayout->iBpp; /*bpp 信息需要提前设定*/
 		tZoonPixelDatas.ibpp 	 = ptPageLayout->iBpp; /*bpp 信息需要提前设定*/
-		tZoonPixelDatas.pucPixelDatas = malloc(ptPageLayout->iTotalByte);
+		tZoonPixelDatas.pucPixelDatas = malloc(ptPageLayout->iMaxTotalByte);
 		if (NULL == tZoonPixelDatas.pucPixelDatas)
 			return -1;
 	
@@ -99,8 +99,8 @@ debug("***************************star GetPixelFrmIcon**************************
 debug("***************************end GetPixelFrmIcon***************************\n");
 
 			/* 获得缩放后图标像素数据，通过atIconLyout来获得图标的长宽等信息*/
-			tZoonPixelDatas.iHeight 	= atIconLayout->iRightBotY - atIconLayout->iLeftTopY + 1;
-			tZoonPixelDatas.iWidth 		= atIconLayout->iRightBotX - atIconLayout->iLeftTopX + 1;
+			tZoonPixelDatas.iHeight 	= atIconLayout->iRightBotY - atIconLayout->iLeftTopY ;
+			tZoonPixelDatas.iWidth 		= atIconLayout->iRightBotX - atIconLayout->iLeftTopX ;
 			tZoonPixelDatas.iLineByte	= tZoonPixelDatas.iWidth * tZoonPixelDatas.ibpp / 8;
 			tZoonPixelDatas.iTotalByte  = tZoonPixelDatas.iLineByte * tZoonPixelDatas.iHeight;
 debug("***************************start PicZoom***************************\n");

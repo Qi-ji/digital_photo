@@ -87,6 +87,80 @@ void FlushVideoMemToDev(PT_VideoMem ptVideoMem)
 	}
 	
 }
+/**********************************************************************
+ * 函数名称： SetColorForPixelInVideoMem
+ * 功能描述： 设置VideoMem中某个座标象素的颜色
+ * 输入参数： iX,iY      - 象素座标
+ *            ptVideoMem - 设置VideoMem中的象素
+ *            dwColor    - 设置为这个颜色,颜色格式为0x00RRGGBB
+ * 输出参数： 无
+ * 返 回 值： 这个象素占据多少字节
+ * 修改日期        版本号     修改人	      修改内容
+ ***********************************************************************/
+static int SetColorForPixelInVideoMem(int iX, int iY, PT_VideoMem ptVideoMem, unsigned int dwColor)
+{
+	unsigned char *pucVideoMem;
+	unsigned short *pwVideoMem16bpp;
+	unsigned int *pdwVideoMem32bpp;
+	unsigned short wColor16bpp; /* 565 */
+	int iRed;
+	int iGreen;
+	int iBlue;
 
+	pucVideoMem      = ptVideoMem->tPixelDatas.pucPixelDatas;
+	pucVideoMem      += iY * ptVideoMem->tPixelDatas.iLineByte+ iX * ptVideoMem->tPixelDatas.ibpp/ 8;
+	pwVideoMem16bpp  = (unsigned short *)pucVideoMem;
+	pdwVideoMem32bpp = (unsigned int *)pucVideoMem;
+
+	switch (ptVideoMem->tPixelDatas.ibpp)
+	{
+		case 8:
+		{
+			*pucVideoMem = (unsigned char)dwColor;
+			return 1;
+			break;
+		}
+		case 16:
+		{
+			iRed   = (dwColor >> (16+3)) & 0x1f;
+			iGreen = (dwColor >> (8+2)) & 0x3f;
+			iBlue  = (dwColor >> 3) & 0x1f;
+			wColor16bpp = (iRed << 11) | (iGreen << 5) | iBlue;
+			*pwVideoMem16bpp	= wColor16bpp;
+			return 2;
+			break;
+		}
+		case 32:
+		{
+			*pdwVideoMem32bpp = dwColor;
+			return 4;
+			break;
+		}
+		default :
+		{			
+			return -1;
+		}
+	}
+
+	return -1;
+}
+
+/**********************************************************************
+ * 函数名称： ClearRegionVideoMem
+ * 功能描述： 清除VideoMem中某个矩形区域,设为某颜色
+ * 输入参数： iTopLeftX,iTopLeftY   - 矩形区域的左上角座标
+ *            iBotRightX,iBotRightY - 矩形区域的右下角座标
+ *            ptVideoMem            - 设置VideoMem中的矩形区域
+ *            dwColor               - 设置为这个颜色,颜色格式为0x00RRGGBB
+ * 输出参数： 无
+ * 返 回 值： 无
+ ***********************************************************************/
+void ClearRegionVideoMem(int iTopLeftX, int iTopLeftY, int iBotRightX, int iBotRightY, PT_VideoMem ptVideoMem, unsigned int dwColor)
+{
+	int x, y;
+	for (y = iTopLeftY; y <= iBotRightY; y++)
+		for (x = iTopLeftX; x <= iBotRightX; x++)
+			SetColorForPixelInVideoMem(x, y, ptVideoMem, dwColor);
+}
 
 

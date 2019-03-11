@@ -32,6 +32,17 @@ void FreePixelFrmIcon(PT_PixelDatas ptPixelDatas);
  ***********************************************************************/
 void FlushVideoMemToDev(PT_VideoMem ptVideoMem);
 
+/**********************************************************************
+ * 函数名称： ClearRegionVideoMem
+ * 功能描述： 清除VideoMem中某个矩形区域,设为某颜色
+ * 输入参数： iTopLeftX,iTopLeftY   - 矩形区域的左上角座标
+ *            iBotRightX,iBotRightY - 矩形区域的右下角座标
+ *            ptVideoMem            - 设置VideoMem中的矩形区域
+ *            dwColor               - 设置为这个颜色,颜色格式为0x00RRGGBB
+ * 输出参数： 无
+ * 返 回 值： 无
+ ***********************************************************************/
+void ClearRegionVideoMem(int iTopLeftX, int iTopLeftY, int iBotRightX, int iBotRightY, PT_VideoMem ptVideoMem, unsigned int dwColor);
 
 
 #endif

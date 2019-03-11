@@ -19,7 +19,10 @@
 /***************************macro definition*************************************/
 
 #define ICON_PATH     "/opt/icons"
+//#define DEFAULT_DIR   "/album_proj/image"
 #define DEFAULT_DIR   "/"
+
+
 
 
 //The picture's max resolution is 1096*1086,and the bpp is 24.

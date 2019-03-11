@@ -6,14 +6,14 @@
 
 
 static T_IconLayout g_atMainPageIconLayout[] = {
-	{0,0,0,0,"browse_button.bmp"},
-	{0,0,0,0,"continue_button.bmp"},
-	{0,0,0,0,"setting_button.bmp"},
+	{0,0,0,0,"browse_mode.bmp"},
+	{0,0,0,0,"continue_mode.bmp"},
+	{0,0,0,0,"setting.bmp"},
 	{0,0,0,0,NULL},
 };
 
 static T_PageLayout g_tPageLayout = {
-	.iTotalByte = 0,
+	.iMaxTotalByte = 0,
 	.atIconLayout = g_atMainPageIconLayout,
 };
 
@@ -50,16 +50,17 @@ static int  CalcMainPageLayout(PT_PageLayout ptPageLayout)
 	iIconHeight = atIconLayout[0].iRightBotY - atIconLayout[0].iLeftTopY +1;
 	iIconTotalByte = iIconWidth * iIconHeight * iBpp / 8;
 
-	if (ptPageLayout->iTotalByte < iIconTotalByte)
+	if (ptPageLayout->iMaxTotalByte < iIconTotalByte)
 	{
-		ptPageLayout->iTotalByte = iIconTotalByte;
+		ptPageLayout->iMaxTotalByte = iIconTotalByte;
 	}
-
+/*
 	debug (" atIconLayout[0].iLeftTopX = %d \n.", atIconLayout[0].iLeftTopX);
 	debug (" atIconLayout[0].iLeftTopY = %d \n.", atIconLayout[0].iLeftTopY);
 	debug (" atIconLayout[0].iRightBotX = %d \n.", atIconLayout[0].iRightBotX);
 	debug (" atIconLayout[0].iRightBotY = %d \n.", atIconLayout[0].iRightBotY);
 	debug (" iIconTotalByte = %d \n.", iIconTotalByte);
+*/
 	/*continue_button.jpg 图标位置计算*/
 	atIconLayout[1].iLeftTopX = iXres * 1/3;
 	atIconLayout[1].iLeftTopY = iYres * 4/10;
@@ -69,17 +70,17 @@ static int  CalcMainPageLayout(PT_PageLayout ptPageLayout)
 	iIconWidth = atIconLayout[1].iRightBotX - atIconLayout[1].iLeftTopX +1; /*注意这里计算是要加1 的*/
 	iIconHeight = atIconLayout[1].iRightBotY - atIconLayout[1].iLeftTopY +1;
 	iIconTotalByte = iIconWidth * iIconHeight * iBpp / 8;
-	if (ptPageLayout->iTotalByte < iIconTotalByte)
+	if (ptPageLayout->iMaxTotalByte < iIconTotalByte)
 	{
-		ptPageLayout->iTotalByte = iIconTotalByte;
+		ptPageLayout->iMaxTotalByte = iIconTotalByte;
 	}
-	
+/*	
 	debug (" atIconLayout[1].iLeftTopX = %d \n.", atIconLayout[1].iLeftTopX);
 	debug (" atIconLayout[1].iLeftTopY = %d \n.", atIconLayout[1].iLeftTopY);
 	debug (" atIconLayout[1].iRightBotX = %d \n.", atIconLayout[1].iRightBotX);
 	debug (" atIconLayout[1].iRightBotY = %d \n.", atIconLayout[1].iRightBotY);
 	debug (" iIconTotalByte = %d \n.", iIconTotalByte);
-	
+*/	
 	/*setting_button.jpg 图标位置计算*/
 	atIconLayout[2].iLeftTopX = iXres * 1/3;
 	atIconLayout[2].iLeftTopY = iYres * 7/10;
@@ -89,16 +90,17 @@ static int  CalcMainPageLayout(PT_PageLayout ptPageLayout)
 	iIconWidth = atIconLayout[2].iRightBotX - atIconLayout[2].iLeftTopX +1; /*注意这里计算是要加1 的*/
 	iIconHeight = atIconLayout[2].iRightBotY - atIconLayout[2].iLeftTopY +1;
 	iIconTotalByte = iIconWidth * iIconHeight * iBpp / 8;
-	if (ptPageLayout->iTotalByte < iIconTotalByte)
+	if (ptPageLayout->iMaxTotalByte < iIconTotalByte)
 	{
-		ptPageLayout->iTotalByte = iIconTotalByte;
+		ptPageLayout->iMaxTotalByte = iIconTotalByte;
 	}
+/*
 	debug (" atIconLayout[2].iLeftTopX = %d \n.", atIconLayout[2].iLeftTopX);
 	debug (" atIconLayout[2].iLeftTopY = %d \n.", atIconLayout[2].iLeftTopY);
 	debug (" atIconLayout[2].iRightBotX = %d \n.", atIconLayout[2].iRightBotX);
 	debug (" atIconLayout[2].iRightBotY = %d \n.", atIconLayout[2].iRightBotY);
 	debug (" iIconTotalByte = %d \n.", iIconTotalByte);
-
+*/
 	debug("***************************emd CalcMainPage***************************\n");
 	return 0;
 }
@@ -181,8 +183,7 @@ int MainPageRun(PT_PageParams ptParentPageParams)
 
 	
 	/*显示页面*/
-	MainPageShow(&g_tPageLayout);
-
+	MainPageShow(&g_tPageLayout);	
 	/*准备子线程，预放下一页面*/
 
 	/*获得触摸屏的输入事件*/

@@ -12,8 +12,8 @@
 #include <page_manager.h>
 
 char *strJpgName = "girl.jpg";
-//char *strBmpName = "penjurn.bmp";
-char *strBmpName = "continue_button.bmp";
+char *strBmpName = "nextpage_button.bmp";
+//char *strBmpName = "continue_button.bmp";
 //char *strJpgName = "motorbike.jpg";
 char *strSmallJpgName = "shotting.jpg";
 
@@ -54,11 +54,11 @@ int BmpTest(void)
 		return -1; 
 	}
 	
-	PicZoom(&tPixelDatas, &tZoomPixelDatas);
+	//PicZoom(&tPixelDatas, &tZoomPixelDatas);
 	//PicMerge(500, 120, &tZoomPixelDatas, &tPixelDatas);
 	//PicPraser("bmp")->GetPixelDatas(&tFileMap, &tPixelDatas);
-	//GetDefaultDispOpr()->ShowPixel(&tPixelDatas);
-	GetDefaultDispOpr()->ShowPixel(&tZoomPixelDatas);  /*显示缩小后图片*/
+	GetDefaultDispOpr()->ShowPixel(&tPixelDatas);	/*显示原始图片*/
+	//GetDefaultDispOpr()->ShowPixel(&tZoomPixelDatas);  /*显示缩小后图片*/
 	free(tZoomPixelDatas.pucPixelDatas);
 
 	return 0;
