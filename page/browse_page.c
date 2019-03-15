@@ -435,6 +435,19 @@ static void BrowsePageShow(PT_PageLayout ptPageLayout)
 }
 
 /**********************************************************************
+ * 函数名称： BrowsePageGetInputEvent
+ * 功能描述： 为"浏览页面"获得输入数据,判断输入事件位于哪一个图标上
+ * 输入参数： ptPageLayout - 内含多个图标的显示区域
+ * 输出参数： ptInputEvent - 内含得到的输入数据
+ * 返 回 值： -1     - 输入数据不位于任何一个图标之上
+ *            其他值 - 输入数据所落在的图标(PageLayout->atLayout数组的哪一项)
+ ***********************************************************************/
+static int BrowsePageGetInputEvent(PT_PageLayout ptPageLayout, PT_InputEvent ptInputEvent)
+{
+	return GenericGetInputEvent(ptPageLayout, ptInputEvent);
+}
+
+/**********************************************************************
  * 函数名称： BrowsePageRun
  * 功能描述： "浏览页面"的运行函数: 显示路径中的目录及文件
  * 输入参数： ptParentPageParams - 页面信息
@@ -450,18 +463,50 @@ static int BrowsePageRun(PT_PageParams ptParentPageParams)
 	PT_DirContent aptDirContents;
 
 	tPageParams.iPageID = GetPageId("browsepage");
-/*1.获得文件夹内容存储到 g_aptDirContents 结构体中*/
+	/*1.获得文件夹内容存储到 g_aptDirContents 结构体中*/
 	iError = GetDirContents(g_strCurDir, &g_aptDirContents, &g_iDirContentsNumber);
 	if (iError)
 	{
 		debug("GetDirContents error\n");
 		return -1;
 	}
-debug("g_iDirContentsNumber = %d.\n", g_iDirContentsNumber);
 
-/*2.显示浏览页面。2.1菜单图标坐标获取，2.2文件图标坐标获取，2.3生成图标数据*/
+	/*2.显示浏览页面。2.1菜单图标坐标获取，2.2文件图标坐标获取，2.3生成图标数据*/
 	BrowsePageShow(&g_tBPMenuPageLayout);
-	
+
+	/* 3.获得输入事件*/
+	while (1)
+	{
+		/*获得触摸屏触摸的图标下标*/
+		iIndex = GenericGetInputEvent(&g_tBPMenuPageLayout, &tInputEvent);
+		switch (iIndex)
+		{
+			case 0:			/*向上*/
+			{
+				debug("you press the first button\n");
+				 if (0 == strcmp(g_strCurDir, "/"))  /* 已经是顶层目录 */
+                     {
+                         FreeDirContents(g_aptDirContents, g_iDirContentsNumber);
+                         return ;
+                     }
+			}
+			case 1:			/*选择目录*/
+			{
+				debug("you press the second button\n");
+				return 0;
+			}
+			case 2:			/*上一页*/
+			{
+				debug("you press the third button\n");
+				return 0;
+			}
+			case 3:			/*下一页*/
+			{
+				debug("you press the forth button\n");
+				return 0;
+			}
+		}
+	}
 }
 
 

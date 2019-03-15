@@ -234,6 +234,26 @@ int GetDirContents(char *strDirName, PT_DirContent **pptDirContents, int *piNumb
 	return 0;
 }
 
+/**********************************************************************
+ * 函数名称： FreeDirContents
+ * 功能描述： GetDirContents的清理函数,用来释放内存
+ * 输入参数： aptDirContents - 指向PT_DirContent数组
+ *            iNumber        - 有多少数组项
+ * 输出参数： 无
+ * 返 回 值： 无
+ * 修改日期        版本号     修改人	      修改内容
+ * -----------------------------------------------
+ * 2013/02/08	     V1.0	  韦东山	      创建
+ ***********************************************************************/
+void FreeDirContents(PT_DirContent *aptDirContents, int iNumber)
+{
+	int i;
+	for (i = 0; i < iNumber; i++)
+	{
+		free(aptDirContents[i]);
+	}
+	free(aptDirContents);
+}
 
 
 

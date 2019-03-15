@@ -198,7 +198,8 @@ int MainPageRun(PT_PageParams ptParentPageParams)
 			{
 				debug("you press the first button\n");
 				GetPage("browsepage")->Run(&tPageParams);		/*输入参数是为了判断由哪个页面进入的*/	
-				return 0;
+				MainPageShow(&g_tPageLayout);
+				break;
 			}
 			case 1:			/*图片连播*/
 			{
