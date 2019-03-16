@@ -345,4 +345,26 @@ void ClearVideoMem(PT_VideoMem ptVideoMem, unsigned int dwColor)
 	
 }
 
+/**********************************************************************
+ * 函数名称： GetDevVideoMem
+ * 功能描述： 获得显示设备的显存, 在该显存上操作就可以直接在LCD上显示出来
+ * 输入参数： 无
+ * 输出参数： 无
+ * 返 回 值： 显存对应的VideoMem结构体指针
+ ***********************************************************************/
+PT_VideoMem GetDevVideoMem(void)
+{
+	PT_VideoMem ptTmp = g_ptVideoMemHead;
+	
+	while (ptTmp)
+	{
+		if (ptTmp->bFBDev)
+		{
+			return ptTmp;
+		}
+		ptTmp = ptTmp->ptNext;
+	}
+	return NULL;
+}
+
 

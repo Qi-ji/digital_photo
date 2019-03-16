@@ -98,8 +98,8 @@ int PicZoom(PT_PixelDatas ptOriginPic, PT_PixelDatas ptZoomPic)
 	iRateX = iOriginWidth / iZoomWidth;
 	iRateY = iOriginHeight / iZoomHeight;
 
-	debug("iOriginWidth = %d, iZoomWidth = %d \n", iOriginWidth, iZoomWidth);
-	debug("iRateX = %d, iRateY = %d \n", iRateX, iRateY);
+	//debug("iOriginWidth = %d, iZoomWidth = %d \n", iOriginWidth, iZoomWidth);
+	//debug("iRateX = %d, iRateY = %d \n", iRateX, iRateY);
 		
 	//pucSrcXPixelTable = malloc(ptZoomPic->iLineByte);
 	pucSrcXPixelTable = malloc(sizeof(int) * iZoomWidth);
@@ -113,8 +113,7 @@ int PicZoom(PT_PixelDatas ptOriginPic, PT_PixelDatas ptZoomPic)
 	{
 		pucSrcXPixelTable[x] =  x * iRateX;  /*存放着对应的原图中的x坐标*/
 	}
-	debug("ptZoomPic->iLineByte = %d\n", ptZoomPic->iLineByte);
-	debug("ptOriginPic->iLineByte = %d\n", ptOriginPic->iLineByte);
+
 	for (y=0; y<iZoomHeight; y++)
 	{
 		iSrcY = y * iRateY;

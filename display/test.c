@@ -2,6 +2,10 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <linux/input.h>
+
 
 #include <disp_manager.h>
 #include <config.h>
@@ -99,3 +103,63 @@ int JpgTest(void)
 
 
 
+
+/*触摸屏测试*/
+static int GetTouchScreenEvent(int *type, int *code, int *value)
+{
+	int ret;
+	int g_TSfd;
+	/* 1.打开设备*/
+	g_TSfd = open(TOUCHSCREENDEV, O_RDONLY);
+	if (g_TSfd < 0)
+	{
+		debug("TouchScreenDev open error.\n");
+		return -1;
+	}
+
+	/* 2.读取数据*/
+	struct input_event t_TSInput;
+
+	while(1)
+	{
+		/*阻塞读*/
+		memset(&t_TSInput, 0, sizeof(struct input_event));  /*先将结构体全部清零*/
+		ret = read(g_TSfd, &t_TSInput, sizeof(struct input_event));
+		
+		if (ret != sizeof(struct input_event))
+		{
+			debug("read TouchScreenDev error.\n");
+			TSDevExit();
+			return -1;
+		}
+		if ((t_TSInput.type != 3) || (t_TSInput.type == 3 && t_TSInput.code > 1) )
+		{
+			return -1;
+		}
+		*type = t_TSInput.type;
+		*code = t_TSInput.code;
+		*value = t_TSInput.value;
+		
+		return 0;
+	}
+	
+}
+
+int TouchScreenTest(void)
+{
+	int type, code, value;
+	while(1)
+	{
+		if (0 == GetTouchScreenEvent(&type, &code, &value))
+	    {
+			debug("Type = %d, code = %d, valuee = %d.\n",type,code, value);
+			debug("----------------------------------------------------------\n");
+			debug("\n");
+	    }
+	}
+
+	return 0;
+	
+}
+
+	

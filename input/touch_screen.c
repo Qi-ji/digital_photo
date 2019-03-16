@@ -2,6 +2,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <string.h>
 
 
 #include <linux/input.h>
@@ -51,27 +52,33 @@ void TSDevExit(void)
  ***********************************************************************/
 int TSGetInputEvent(PT_InputEvent ptInputEvent)
 {
-	int ret, i = 0;
+	int ret;
 	struct input_event t_TSInput;
 	
 	while(1)
 	{
 	/*阻塞读*/
-		//memset(&t_TSInput, 0, sizeof(struct input_event));  /*先将结构体全部清零*/
+		memset(&t_TSInput, 0, sizeof(struct input_event));  /*先将结构体全部清零*/
 		ret = read(g_TSfd, &t_TSInput, sizeof(struct input_event));
 		if (ret == sizeof(struct input_event))
 		{
+			if ((t_TSInput.type != 3) || (t_TSInput.type == 3 && t_TSInput.code > 1) )
+			{
+				ptInputEvent->iPressure = 1;
+				return -1;
+			}			
+
 			/*X坐标*/
 			if ((t_TSInput.type == EV_ABS) && (t_TSInput.code == ABS_X))
+			{
+				ptInputEvent->iType = TOUCHSCREEN;
 				ptInputEvent->iX = t_TSInput.value;
+			}
+			/*Y坐标*/	
 			if ((t_TSInput.type == EV_ABS) && (t_TSInput.code == ABS_Y))
 				ptInputEvent->iY = t_TSInput.value;
-/*
-			if ((t_TSInput.type == 0) && (t_TSInput.code == 0) && (t_TSInput.value == 0))
-			{
-				ptInputEvent->iPressure = 0; 
-			}
-*/		
+			
+			ptInputEvent->iPressure = 0;
 		}
 		else
 		{
@@ -79,23 +86,10 @@ int TSGetInputEvent(PT_InputEvent ptInputEvent)
 			TSDevExit();
 			return -1;
 		}
-		
-		if( t_TSInput.type == EV_ABS )
-		{
-			ptInputEvent->iType = TOUCHSCREEN;
-			ptInputEvent->iPressure = 1;
-		}
-		else 
-		{
-			ptInputEvent->iPressure = 0;
-		}
 
-		debug("X = %d, Y = %d, iType = %d, iPressur = %d.\n",ptInputEvent->iX, ptInputEvent->iY, ptInputEvent->iType, ptInputEvent->iPressure);
-		//return 0;   /*这点不清楚为什么要这样*/
-		//if(i++ == 2)
-			return 0;
+		return 0;
 	}
-	return 0;   /*这点不清楚为什么要这样*/
+	return 0; 
 }
 
 T_InputOpr g_tTSOpr = {

@@ -142,7 +142,7 @@ int GetInputEvent(PT_InputEvent ptInputEvent)
 	*ptInputEvent = g_tInputEvent;			/*g_tInputEvent结构体中的内容赋值到输入指针指向的空间中*/
 	pthread_mutex_unlock(&g_tMutex);
 
-	debug("12321iX = %d, iY = %d\n",ptInputEvent->iX, ptInputEvent->iY);
+	debug("iX = %d, iY = %d, presser = %d\n",ptInputEvent->iX, ptInputEvent->iY, ptInputEvent->iPressure);
 	return 0;	
 }
 

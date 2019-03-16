@@ -45,12 +45,12 @@ int GetPixelFrmIcon(char *pcName, PT_PixelDatas ptPixelDatas)
 		UnMapFile(&tIconFileMap);
 		return -1;
 	}
-
+/*
 debug("Icon original iWidth = %d.\n",ptPixelDatas->iWidth);
 debug("Icon original iHeight = %d.\n",ptPixelDatas->iHeight);
 debug("Icon original iLineByte = %d.\n",ptPixelDatas->iLineByte);
 debug("Icon original iTotalByte = %d.\n",ptPixelDatas->iTotalByte);
-
+*/
 	
 	UnMapFile(&tIconFileMap);
 	return 0;
@@ -161,6 +161,37 @@ void ClearRegionVideoMem(int iTopLeftX, int iTopLeftY, int iBotRightX, int iBotR
 	for (y = iTopLeftY; y <= iBotRightY; y++)
 		for (x = iTopLeftX; x <= iBotRightX; x++)
 			SetColorForPixelInVideoMem(x, y, ptVideoMem, dwColor);
+}
+
+/**********************************************************************
+ * 函数名称： PressIcon
+ * 功能描述： 按下图标,只是改变显示设备上的图标按钮颜色
+ * 输入参数： ptLayout   - 图标所在矩形区域
+ * 输出参数： 无
+ * 返 回 值： 无
+ ***********************************************************************/
+void PressIcon(PT_IconLayout ptLayout)
+{
+	int iY;
+	int i;
+	int iButtonWidthBytes;
+	int iLineWidth;
+	unsigned char *pucVideoMem;
+	PT_DispOpr ptDispOpr = GetDefaultDispOpr();
+
+	pucVideoMem = ptDispOpr->pdwDispMem;
+	iLineWidth = ptDispOpr->iXres * ptDispOpr->ibpp / 8; 
+	pucVideoMem += ptLayout->iLeftTopY* iLineWidth + ptLayout->iLeftTopX * ptDispOpr->ibpp/ 8; /* 图标在Framebuffer中的地址 */
+	iButtonWidthBytes = (ptLayout->iRightBotX - ptLayout->iLeftTopX + 1) * ptDispOpr->ibpp / 8;
+
+	for (iY = ptLayout->iLeftTopY; iY <= ptLayout->iRightBotY; iY++)
+	{
+		for (i = 0; i < iButtonWidthBytes; i++)
+		{
+			pucVideoMem[i] = ~pucVideoMem[i];  /* 取反 */
+		}
+		pucVideoMem += iLineWidth;
+	}
 }
 
 

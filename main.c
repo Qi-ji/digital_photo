@@ -34,7 +34,9 @@ int main(void)
 
 	//BmpTest();
 	//JpgTest();
-
+	//TouchScreenTest();
+	
+	
 /*实验主页面显示*/
 	GetPage("mainpage")->Run(NULL);
 

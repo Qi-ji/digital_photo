@@ -44,6 +44,16 @@ void FlushVideoMemToDev(PT_VideoMem ptVideoMem);
  ***********************************************************************/
 void ClearRegionVideoMem(int iTopLeftX, int iTopLeftY, int iBotRightX, int iBotRightY, PT_VideoMem ptVideoMem, unsigned int dwColor);
 
+/**********************************************************************
+ * 函数名称： PressIcon
+ * 功能描述： 按下图标,只是改变显示设备上的图标按钮颜色
+ * 输入参数： ptLayout   - 图标所在矩形区域
+ * 输出参数： 无
+ * 返 回 值： 无
+ ***********************************************************************/
+void PressIcon(PT_IconLayout ptLayout);
+
+
 
 #endif
 

@@ -7,6 +7,9 @@ int BmpTest(void);
 
 /*JPG∏Ò ΩÕº∆¨œ‘ æ≤‚ ‘*/
 int JpgTest(void);
+/*¥•√˛∆¡≤‚ ‘*/
+int TouchScreenTest(void);
+
 
 
 
