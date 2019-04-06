@@ -194,4 +194,38 @@ void PressIcon(PT_IconLayout ptLayout)
 	}
 }
 
+/**********************************************************************
+ * 函数名称： isPictureFileSupported
+ * 功能描述： 判断该文件系统是否支持显示
+ * 输入参数： strFileName   - 文件路径
+ * 输出参数： 无
+ * 返 回 值： 其他 - 不支持
+ * 		   1 - 支持
+ ***********************************************************************/
+int isPictureFileSupported(char *strFileName)
+{
+	if(NULL == strFileName)
+		return -1;
+	T_FileMap tFileMap;
+	int iError;
+	strncpy(tFileMap.strFileName, strFileName, 256);
+	tFileMap.strFileName[255] = '\0';
+	
+	iError = MapFile(&tFileMap);
+	if (iError)
+	{
+		debug("FileMap faile.\n");
+		return -1;
+	}
+
+	if (NULL == GetPicPraser(&tFileMap))/*未找到该图片的解析器*/
+	{
+		UnMapFile(&tFileMap);
+		return 0;
+	}
+	
+	UnMapFile(&tFileMap);	
+	return 1;
+}
+
 

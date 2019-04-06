@@ -47,7 +47,7 @@ typedef struct PixelDatas{
 typedef struct PicFilePraser{
 	char *name;
 	int (*isSupport)(PT_FileMap ptFileMap);
-	int (*GetPixelDatas)(PT_FileMap ptFileMap, PT_PixelDatas ptPixelDatas);
+	int (*GetPixelDatas)(PT_FileMap ptFileMap, PT_PixelDatas ptPixelDatas);/*使用之前需要指定ibpp*/
 	int (*FreePixelDatas)(PT_PixelDatas ptPixelDatas);
 	struct PicFilePraser *next;
 }T_PicFilePraser, *PT_PicFilePraser;

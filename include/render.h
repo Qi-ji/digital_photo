@@ -53,6 +53,15 @@ void ClearRegionVideoMem(int iTopLeftX, int iTopLeftY, int iBotRightX, int iBotR
  ***********************************************************************/
 void PressIcon(PT_IconLayout ptLayout);
 
+/**********************************************************************
+ * 函数名称： isPictureFileSupported
+ * 功能描述： 判断该文件系统是否支持显示
+ * 输入参数： strFileName   - 文件路径
+ * 输出参数： 无
+ * 返 回 值： 其他 - 不支持
+ * 		   1 - 支持
+ ***********************************************************************/
+int isPictureFileSupported(char *strFileName);
 
 
 #endif

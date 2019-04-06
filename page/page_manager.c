@@ -216,6 +216,7 @@ int PagesInit(void)
 
 	iError  = MainPageInit();
 	iError |= BrowsePageInit();
+	iError |= ManualPageInit();
 	return iError;
 }
 

@@ -3,6 +3,7 @@
 #include <disp_manager.h>
 #include <page_manager.h>
 #include <render.h>
+#include <input_manager.h>
 
 
 static T_IconLayout g_atMainPageIconLayout[] = {
@@ -177,6 +178,7 @@ int MainPageRun(PT_PageParams ptParentPageParams)
 {
 	int iIndex;
 	T_InputEvent tInputEvent;
+	T_InputEvent tTempInputEvent;
 	T_PageParams tPageParams;
 
 	tPageParams.iPageID = GetPageId("mainpage");
@@ -203,8 +205,19 @@ int MainPageRun(PT_PageParams ptParentPageParams)
 			}
 			case 1:			/*Õº∆¨¡¨≤•*/
 			{
-				debug("you press the second button\n");
-				return 0;
+				picture_scan("./image");
+
+				//while(1)
+				//{
+					picture_display();
+					if(GetInputEvent(&tTempInputEvent) == 0)
+					{
+						printf("11111111111111111111111111111111111111111111111111\n\n");
+						break;
+					}
+						
+				//}
+				break;
 			}
 			case 2:			/*…Ë÷√*/
 			{

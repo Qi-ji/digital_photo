@@ -20,7 +20,7 @@
 
 #define ICON_PATH     "/opt/icons"
 //#define DEFAULT_DIR   "/album_proj/image"
-#define DEFAULT_DIR   "/"
+#define DEFAULT_DIR   "/album_proj"
 
 
 

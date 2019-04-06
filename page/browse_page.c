@@ -7,7 +7,7 @@
 #include <page_manager.h>
 #include <render.h>
 #include <file.h>
-
+#include <test.h>
 
 /* 图标是一个正方体, "图标+名字"也是一个正方体
  *   --------
@@ -67,8 +67,8 @@ static int g_iStartIndex = 0;			/*记录要打开的文件夹及文件的下标，为翻页情况准备
 /**********************************************************************
  * 函数名称： CalcBPMenuLayout
  * 功能描述： 计算"浏览页面"的功能菜单位置信息
- * 输入参数： ptParentPageParams - 页面信息,含页面功能菜单信息
- * 输出参数： ptParentPageParams - 页面信息,计算返回页面功能菜单位置信息
+ * 输入参数： ptPageLayout - 页面信息,含页面功能菜单信息
+ * 输出参数： ptPageLayout - 页面信息,计算返回页面功能菜单位置信息
  * 返 回 值： 
  ***********************************************************************/
 static int CalcBPMenuLayout(PT_PageLayout ptPageLayout)
@@ -353,8 +353,8 @@ static int GeneBPDirAndFile(PT_PageLayout ptPageLayout, int iStartIndex, int iDi
 	 				     ptPageLayout->iRightBotX, ptPageLayout->iRightBotY,
 	 					 ptVideoMem, COLOR_BACKGROUND);
 	 //SetFontSize(atLayout[1].iBotRightY - atLayout[1].iTopLeftY - 5);
-debug("g_iNumPerCol = %d \n", g_iNumPerCol);	 
-debug("g_iNumPerRow = %d \n", g_iNumPerRow);
+//debug("g_iNumPerCol = %d \n", g_iNumPerCol);	 
+//debug("g_iNumPerRow = %d \n", g_iNumPerRow);
 	for (i = 0; i < g_iNumPerCol; i++)
     {
         for (j = 0; j < g_iNumPerRow; j++)
@@ -473,7 +473,7 @@ static int FindFileIndex(PT_PageLayout ptInterfaceLayout, PT_InputEvent ptInputE
 		if ((ptInputEvent->iX >= atIconLayout[i].iLeftTopX) && (ptInputEvent->iX <= atIconLayout[i].iRightBotX) && \
 			 (ptInputEvent->iY >= atIconLayout[i].iLeftTopY) && (ptInputEvent->iY <= atIconLayout[i].iRightBotY))
 		{
-			debug("\nthe index is %d\n", i);
+			debug("the index is %d\n", i);
 			/* 找到了被点中的按钮 */
 			return i;  
 		}
@@ -511,6 +511,7 @@ static void BrowsePageRun(PT_PageParams ptParentPageParams)
 
 	ptVideoMem = GetDevVideoMem();/*直接在显存上显示*/
 	tPageParams.iPageID = GetPageId("browsepage");
+	T_InputEvent tTempInputEvent;
 	
 	/*1.获得文件夹内容存储到 g_aptDirContents 结构体中*/
 	iError = GetDirContents(g_strCurDir, &g_aptDirContents, &g_iDirContentsNumber);
@@ -521,7 +522,7 @@ static void BrowsePageRun(PT_PageParams ptParentPageParams)
 	}
 
 	/*2.显示浏览页面。2.1菜单图标坐标获取，2.2文件图标坐标获取，2.3生成图标数据*/
-	BrowsePageShow(&g_tBPMenuPageLayout);
+	BrowsePageShow(&g_tBPMenuPageLayout);/*目录及文件图标通过全局变量的方式进行传递*/
 
 	/* 3.获得输入事件*/
 	while (1)
@@ -553,7 +554,7 @@ static void BrowsePageRun(PT_PageParams ptParentPageParams)
 				{	
 					case 0: 		/*向上*/
 					{
-						if (0 == strcmp(g_strCurDir, "/"))  /* 已经是顶层目录 */
+						if (0 == strcmp(g_strCurDir, DEFAULT_DIR))  /* 已经是顶层目录 */
 						{
 							FreeDirContents(g_aptDirContents, g_iDirContentsNumber);
 							return 0;
@@ -590,12 +591,13 @@ static void BrowsePageRun(PT_PageParams ptParentPageParams)
 					}
 				}
 			}
-			else /*点击的为Interface 目录与文件区域*/
+			
+			else 					/*点击的为Interface 目录与文件区域*/
 			{
 				/*单击目录则进入*/
-				iFileIndex = g_iStartIndex + (iIndex - DIR_FILT_MIN_INDEX)/2;
-				if (g_aptDirContents[iFileIndex]->eFileType == FILETYPE_DIR)/*是文件夹*/
-				 {
+				iFileIndex = g_iStartIndex + (iIndex - DIR_FILT_MIN_INDEX)/2;	/*除以2是因为下标包括图标跟名字，所以需要除以2才是真正要打开的文件*/
+				if (g_aptDirContents[iFileIndex]->eFileType == FILETYPE_DIR)		/*是文件夹*/
+				{
 					 snprintf(strTmp, 256, "%s/%s", g_strCurDir, g_aptDirContents[iFileIndex]->strName);
 					 strTmp[255] = '\0';
 					 strcpy(g_strCurDir, strTmp);
@@ -608,7 +610,21 @@ static void BrowsePageRun(PT_PageParams ptParentPageParams)
 					 }
 					 g_iStartIndex = 0;
 					GeneBPDirAndFile(&g_tInterfaceLayout, g_iStartIndex, g_iDirContentsNumber, g_aptDirContents, ptVideoMem);
-				 }
+				}
+				else if (g_aptDirContents[iFileIndex]->eFileType == FILETYPE_FILE)	/*是文件*/
+				{
+					snprintf(tPageParams.strCurPictureFile, 256, "%s/%s", g_strCurDir, g_aptDirContents[iFileIndex]->strName);
+					tPageParams.strCurPictureFile[255] = '\0';
+
+					//BPJpgTest(strTmp);/*测试是否可以显示*/
+                    if (isPictureFileSupported(tPageParams.strCurPictureFile))
+                    {
+                        tPageParams.iPageID = GetPageId("browse");
+                        GetPage("manual")->Run(&tPageParams);
+                        BrowsePageShow(&g_tBPMenuPageLayout);
+                    }					
+					
+				}
 				
 			}
 				
@@ -635,6 +651,7 @@ static void BrowsePageRun(PT_PageParams ptParentPageParams)
 T_PageAction g_tBPAction = {
 	.name 			= "browsepage",
 	.Run 			= BrowsePageRun,
+	.GetInputEvent  = BrowsePageGetInputEvent,
 };
 
 /**********************************************************************

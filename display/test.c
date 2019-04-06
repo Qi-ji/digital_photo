@@ -15,7 +15,7 @@
 #include <input_manager.h>
 #include <page_manager.h>
 
-char *strJpgName = "girl.jpg";
+char *strJpgName = "/album_proj/image/jpg picture/motorbike.jpg";
 char *strBmpName = "nextpage_button.bmp";
 //char *strBmpName = "continue_button.bmp";
 //char *strJpgName = "motorbike.jpg";
@@ -75,7 +75,8 @@ int JpgTest(void)
 	T_PixelDatas tPixelDatas;/*原始图片数据*/
 	T_PixelDatas tSmallPixelDatas;
 	T_PixelDatas tZoomPixelDatas;			/*压缩后图片数据*/
-	
+
+	GetDefDispResolution(&g_iDefaultDispXres, &g_iDefaultDispYres, &g_iDefaultDispBpp);
 	tPixelDatas.ibpp = g_iDefaultDispBpp;
 	tSmallPixelDatas.ibpp = g_iDefaultDispBpp;
 	tZoomPixelDatas.ibpp = g_iDefaultDispBpp;
@@ -90,6 +91,7 @@ int JpgTest(void)
 	GetDefaultDispOpr()->ShowPixel(&tPixelDatas);
 
 /*实验合并照片功能*/
+/*
 	snprintf(tFileMap.strFileName, 128, "%s", strSmallJpgName);
 	tFileMap.strFileName[127] = '\0';
 	if (!MapFile(&tFileMap))
@@ -99,6 +101,7 @@ int JpgTest(void)
 	PicPraser("jpg")->GetPixelDatas(&tFileMap, &tSmallPixelDatas);
 	PicMerge(10, 20, &tSmallPixelDatas, &tPixelDatas);
 	GetDefaultDispOpr()->ShowOnePage(&tPixelDatas);	
+*/
 }
 
 
@@ -162,4 +165,24 @@ int TouchScreenTest(void)
 	
 }
 
-	
+
+
+/*Browse page 点击显示JPG格式图片显示测试*/
+int BPJpgTest(char *strjpgName)
+{
+	T_FileMap tFileMap;
+	T_PixelDatas tPixelDatas;/*原始图片数据*/
+
+	GetDefDispResolution(&g_iDefaultDispXres, &g_iDefaultDispYres, &g_iDefaultDispBpp);
+	tPixelDatas.ibpp = g_iDefaultDispBpp;
+
+	snprintf(tFileMap.strFileName, 128, "%s", strjpgName);
+	tFileMap.strFileName[127] = '\0';
+	if (!MapFile(&tFileMap))
+	{
+		debug("mapjpgfile ok\n");
+	}
+	PicPraser("jpg")->GetPixelDatas(&tFileMap, &tPixelDatas);
+	GetDefaultDispOpr()->ShowPixel(&tPixelDatas);
+}
+
