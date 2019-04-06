@@ -89,25 +89,25 @@ debug("-----------------1.start Calc Browse Page Menu Layout----------------\n")
 	/*up.bmp 图标位置计算*/
 	atIconLayout[0].iLeftTopX = 0;
 	atIconLayout[0].iLeftTopY = 0;
-	atIconLayout[0].iRightBotX = iXres * 1/4;
+	atIconLayout[0].iRightBotX = iXres * 1/7;
 	atIconLayout[0].iRightBotY = iYres * 1/4;
 
 	/*select.bmp 图标位置计算*/
 	atIconLayout[1].iLeftTopX = iXres * 0;
 	atIconLayout[1].iLeftTopY = iYres * 1/4 + 1;
-	atIconLayout[1].iRightBotX = iXres * 1/4;
+	atIconLayout[1].iRightBotX = iXres * 1/7;
 	atIconLayout[1].iRightBotY = iYres * 2/4;
 	
 	/*pre_page.bmp 图标位置计算*/
 	atIconLayout[2].iLeftTopX = iXres * 0;
 	atIconLayout[2].iLeftTopY = iYres * 2/4 + 1;
-	atIconLayout[2].iRightBotX = iXres * 1/4;
+	atIconLayout[2].iRightBotX = iXres * 1/7;
 	atIconLayout[2].iRightBotY = iYres * 3/4;
 
 	/*snext_page.bmp 图标位置计算*/
 	atIconLayout[3].iLeftTopX = iXres * 0;
 	atIconLayout[3].iLeftTopY = iYres * 3/4 + 1;
-	atIconLayout[3].iRightBotX = iXres * 1/4;
+	atIconLayout[3].iRightBotX = iXres * 1/7;
 	atIconLayout[3].iRightBotY = iYres * 1;
 
 	for(i=0; i<4; i++)

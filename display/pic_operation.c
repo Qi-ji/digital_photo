@@ -88,18 +88,21 @@ int PicZoom(PT_PixelDatas ptOriginPic, PT_PixelDatas ptZoomPic)
 	int iOriginHeight;
 	int iSrcY, iSrcX;
 	int x, y;
-	int iRateX, iRateY;
+	//int iRateX, iRateY;
+	float iRateX, iRateY;
 
 	iZoomWidth = ptZoomPic->iWidth;
 	iZoomHeight = ptZoomPic->iHeight;
 	iOriginWidth = ptOriginPic->iWidth;
 	iOriginHeight = ptOriginPic->iHeight;
 	
-	iRateX = iOriginWidth / iZoomWidth;
-	iRateY = iOriginHeight / iZoomHeight;
+	iRateX = (float)iOriginWidth / iZoomWidth;
+	iRateY = (float)iOriginHeight / iZoomHeight;
 
-	//debug("iOriginWidth = %d, iZoomWidth = %d \n", iOriginWidth, iZoomWidth);
-	//debug("iRateX = %d, iRateY = %d \n", iRateX, iRateY);
+	debug("iOriginWidth = %d, iZoomWidth = %d \n", iOriginWidth, iZoomWidth);
+	debug("iOriginHeight = %d, iZoomHeight = %d \n", iOriginHeight, iZoomHeight);
+
+	debug("iRateX = %f, iRateY = %f \n", iRateX, iRateY);
 		
 	//pucSrcXPixelTable = malloc(ptZoomPic->iLineByte);
 	pucSrcXPixelTable = malloc(sizeof(int) * iZoomWidth);
@@ -127,5 +130,6 @@ int PicZoom(PT_PixelDatas ptOriginPic, PT_PixelDatas ptZoomPic)
 	}
 
 	free(pucSrcXPixelTable);	
+	return 0;
 }
 

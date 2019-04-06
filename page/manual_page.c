@@ -25,6 +25,7 @@ static T_PageLayout g_tMPMenulayout = {
 	.atIconLayout = g_atMPIconLayou,
 
 };
+static T_IconLayout g_tPicShowLayout; /*照片显示位置*/
 	
 static T_PixelDatas g_tOriginalPixelDatas;
 static T_PixelDatas g_tZoomPixelDatas;
@@ -33,19 +34,19 @@ static T_PixelDatas g_tZoomPixelDatas;
 /**********************************************************************
  * 函数名称： CalcMPPicLayout
  * 功能描述： 计算"手动页面"的照片显示区域的位置信息
- * 输入参数： ptPageLayout - 页面信息,含页面功能菜单信息
- * 输出参数： ptPageLayout - 页面信息,计算返回页面功能菜单位置信息
+ * 输入参数： 
+ * 输出参数： ptPicShowLayout - 页面信息,计算返回页面功能菜单位置信息
  * 返 回 值： 
  ***********************************************************************/
-void CalcMPPicLayout (PT_IconLayout ptPicShowLayout)
+void CalcMPPicLayout (void)
 {
 	int iXres, iYres, iBpp;
 	GetDefDispResolution(&iXres, &iYres, &iBpp);
 	
-	ptPicShowLayout->iLeftTopX = g_atMPIconLayou[0].iRightBotX + 1;/*100*/
-	ptPicShowLayout->iLeftTopY = 0;
-	ptPicShowLayout->iRightBotX = iXres - 1;
-	ptPicShowLayout->iRightBotY = iYres - 1; 
+	g_tPicShowLayout.iLeftTopX = g_atMPIconLayou[0].iRightBotX + 1;/*100*/
+	g_tPicShowLayout.iLeftTopY = 0;
+	g_tPicShowLayout.iRightBotX = iXres - 1;
+	g_tPicShowLayout.iRightBotY = iYres - 1; 
 }
 
 
@@ -185,37 +186,96 @@ static PT_PixelDatas GetOriginalPixel(char *strPicName)
  ***********************************************************************/
 static PT_PixelDatas GetZoomPixel(PT_PixelDatas ptOriginalPixelDatas, int iZoomHeight,int iZoomWidth)
 {
-	return NULL;
+
+	int iXres, iYres, iBpp;
+	float k;
+	int iError;
+	
+/*1. 获得缩小后照片的长宽等信息*/	
+	/*保证照片的长宽比不变*/
+	k = (float)ptOriginalPixelDatas->iWidth / ptOriginalPixelDatas->iHeight;
+	
+	GetDefDispResolution(&iXres, &iYres, &iBpp);
+	g_tZoomPixelDatas.ibpp = iBpp;
+	g_tZoomPixelDatas.iHeight = iZoomHeight;
+	g_tZoomPixelDatas.iWidth = iZoomHeight * k;
+	
+	/*看长跟宽哪个更小，以更小的那个为标准*/
+	if (g_tZoomPixelDatas.iWidth > iZoomWidth)
+	{
+		g_tZoomPixelDatas.iWidth = iZoomWidth;
+		g_tZoomPixelDatas.iHeight = iZoomWidth / k;
+	}
+
+	g_tZoomPixelDatas.iLineByte = g_tZoomPixelDatas.iWidth * iBpp / 8;
+	g_tZoomPixelDatas.iTotalByte = g_tZoomPixelDatas.iLineByte * g_tZoomPixelDatas.iHeight;
+	g_tZoomPixelDatas.pucPixelDatas = malloc(g_tZoomPixelDatas.iTotalByte);
+	if (NULL == g_tZoomPixelDatas.pucPixelDatas)
+	{
+		return NULL;
+	}
+	debug("k = %f\n",k);
+	debug("g_tZoomPixelDatas.iWidth = %d\n", g_tZoomPixelDatas.iWidth);
+	debug("g_tZoomPixelDatas.iHeight = %d\n", g_tZoomPixelDatas.iHeight);
+	debug("g_tZoomPixelDatas.iLineByte = %d\n", g_tZoomPixelDatas.iLineByte);
+	debug("g_tZoomPixelDatas.iTotalByte = %d\n", g_tZoomPixelDatas.iTotalByte);
+
+	iError = PicZoom(ptOriginalPixelDatas, &g_tZoomPixelDatas);
+	if (iError)
+		return NULL;
+	
+	return &g_tZoomPixelDatas;
 }
 
 /**********************************************************************
- * 函数名称： ShowPicure
+ * 函数名称： ShowPicture
  * 功能描述： 在"手动页面"上显示选择的照片
- * 输入参数： ptPicShowLayout - 内含图片的显示区域
+ * 输入参数： g_tPicShowLayout - 内含图片的显示区域
  *			  ptVideoMem - 显存
  *			  strPicName - 要显示的照片的名字
  * 输出参数： 
  * 返 回 值： 0 - 成功
  *            其他值 - 失败
  ***********************************************************************/
-static int ShowPicure(PT_IconLayout ptPicShowLayout, PT_VideoMem ptVideoMem, char *strPicName)
+static int ShowPicture(PT_VideoMem ptVideoMem, char *strPicName)
 {
-    int iError;
-	int iPictureWidth, iPictureHeight;
+	int iPictureWidth, iPictureHeight;		/*照片显示区域的大小表示*/
+	int iPicLeftTopX, iPicLeftTopY;			/*照片合并时的合并位置*/
 	PT_PixelDatas ptOriginalPixel, ptZoomPixel;
 	
 	/*1. 获得照片的原始数据*/
 	ptOriginalPixel = GetOriginalPixel(strPicName);		/*g_tOriginalPixelDatas - 使用到全局变量来存放照片原始数据*/
-
+	debug("Have got [%s] pixel datas.\n", strPicName);
+	
 	/*2. 获得照片缩放后的大小，以及缩放后的数据*/
-	iPictureWidth = ptPicShowLayout->iRightBotX - ptPicShowLayout->iLeftTopX + 1;
-	iPictureHeight = ptPicShowLayout->iRightBotY - ptPicShowLayout->iLeftTopY + 1;
+	iPictureWidth = g_tPicShowLayout.iRightBotX - g_tPicShowLayout.iLeftTopX + 1;
+	iPictureHeight = g_tPicShowLayout.iRightBotY - g_tPicShowLayout.iLeftTopY + 1;
 
 	ptZoomPixel = GetZoomPixel(&g_tOriginalPixelDatas, iPictureHeight, iPictureWidth);
-
-	
+	if (NULL == ptZoomPixel)
+	{
+		debug("fale: can not get [%s] zoom pixel\n", strPicName);
+		return -1;
+	}
+	debug("Have got Zoomed pixel datas.\n");
 	/*3. 获得照片缩放后的大小及合并到内存上时的位置*/
-	
+	debug("g_tPicShowLayout.iLeftTopX = %d\n",g_tPicShowLayout.iLeftTopX);
+	debug("g_tPicShowLayout.iLeftTopY = %d\n",g_tPicShowLayout.iLeftTopY);
+
+	debug("iPictureWidth = %d\n",iPictureWidth);
+	debug("iPictureHeight = %d\n",iPictureHeight);
+	debug("ptZoomPixel->iWidth = %d\n",ptZoomPixel->iWidth);
+	debug("ptZoomPixel->iHeight = %d\n",ptZoomPixel->iHeight);
+
+	iPicLeftTopX = g_tPicShowLayout.iLeftTopX + ((iPictureWidth - ptZoomPixel->iWidth) / 2);
+	iPicLeftTopY = g_tPicShowLayout.iLeftTopY + ((iPictureHeight - ptZoomPixel->iHeight) / 2);
+
+	debug("iPicLeftTopX = %d\n",iPicLeftTopX);
+	debug("iPicLeftTopY = %d\n",iPicLeftTopY);
+
+	ClearRegionVideoMem(g_tPicShowLayout.iLeftTopX, g_tPicShowLayout.iLeftTopY, g_tPicShowLayout.iRightBotX, g_tPicShowLayout.iRightBotY, ptVideoMem, BLACK);
+	PicMerge(iPicLeftTopX, iPicLeftTopY, ptZoomPixel, &ptVideoMem->tPixelDatas);
+	return 0;
 }
 
 
@@ -243,7 +303,6 @@ static int ManualPageGetInputEvent(PT_PageLayout ptPageLayout, PT_InputEvent ptI
 static void ManualPageShow(PT_PageLayout ptPageLayout, PT_PageParams ptParentPageParams)
 {
 	PT_VideoMem ptVideoMem; 
-	T_IconLayout tShowPicLayout; /*照片显示位置*/
 	PT_IconLayout ptIconLayout = ptPageLayout->atIconLayout; /*Menu图标显示位置*/
 	int iError;
 	
@@ -256,11 +315,11 @@ static void ManualPageShow(PT_PageLayout ptPageLayout, PT_PageParams ptParentPag
 	if (g_atMPIconLayou[0].iLeftTopX == 0)
 	{
 	    CalcMPMenuLayout(ptPageLayout);
-		CalcMPPicLayout(&tShowPicLayout);					/*显示照片区域的位置*/
+		CalcMPPicLayout();					/*显示照片区域的位置*/
 	}
 	/*3. 获得Menu图标与照片数据*/
 	iError  = GeneratePage(ptPageLayout, ptVideoMem);
-	iError |= ShowPicure(&tShowPicLayout, ptVideoMem, ptParentPageParams->strCurPictureFile);
+	iError |= ShowPicture(ptVideoMem, ptParentPageParams->strCurPictureFile);
 	if (iError)
 		return;
 
@@ -278,13 +337,103 @@ static void ManualPageShow(PT_PageLayout ptPageLayout, PT_PageParams ptParentPag
  ***********************************************************************/
 static void ManualPageRun(PT_PageParams ptParentPageParams)
 {
+	T_InputEvent tInputEvent;
+	int iIndex;
+	int iError;
+	char strDirName[256];
+	char strFileName[256];
+	char strNewFileName[256];
+	PT_DirContent *aptDirContents;
+    int iDirContentsNumber;
+	int iPicFileIndex;
+	char *pcTmp;				
+	PT_VideoMem ptDevVideoMem;
+
 	T_PageParams tPageParams;
 	tPageParams.iPageID = GetPageId("manual");
-	
-		//{
+	ptDevVideoMem = GetDevVideoMem();
+
+	/*1. 显示页面*/
 	ManualPageShow(&g_tMPMenulayout, ptParentPageParams);
-		//}
-	//while(1);
+	/*2. 对照片序号、文件目录进行处理，方便翻页*/
+
+	/* 取出目录名 */
+    strcpy(strDirName, ptParentPageParams->strCurPictureFile);
+    pcTmp = strrchr(strDirName, '/');
+    *pcTmp = '\0';	
+	    /* 取出文件名 */
+    strcpy(strFileName, pcTmp+1);
+
+    /* 获得当前目录下所有目录和文件的名字 */
+    iError = GetDirContents(strDirName, &aptDirContents, &iDirContentsNumber);
+
+    /* 确定当前显示的是哪一个文件 */
+    for (iPicFileIndex = 0; iPicFileIndex < iDirContentsNumber; iPicFileIndex++)
+    {
+        if (0 == strcmp(strFileName, aptDirContents[iPicFileIndex]->strName))
+        {
+            break;
+        }
+    }
+	
+	/*3. 获得输入事件*/
+	while(1)
+	{
+		/*获得触摸屏触摸的Menu区域图标下标，tInputEvent 中通过函数获得触摸屏坐标*/
+		iIndex = GenericGetInputEvent(&g_tMPMenulayout, &tInputEvent);
+		if (tInputEvent.iPressure == 0)/*按键是松开状态*/
+		{
+			switch (iIndex)
+			{	
+				case 0: 		/*返回*/
+				{
+					return;
+					break;
+				}
+				case 1: 		/*缩小*/
+				{
+					
+					break;
+				}
+				case 2: 		/*放大*/
+				{
+					
+					break;
+				}
+				case 3: 		/*上一张*/
+				{
+					if (iPicFileIndex < 1)
+						iPicFileIndex = iDirContentsNumber;
+					iPicFileIndex--;
+					sprintf(strNewFileName, "%s/%s", strDirName, aptDirContents[iPicFileIndex]->strName);
+					if (isPictureFileSupported(strNewFileName))
+					{
+						ShowPicture(ptDevVideoMem, strNewFileName);
+						break;
+					}
+				}
+				case 4: 		/*下一张*/
+				{
+					if (iPicFileIndex > iDirContentsNumber - 2)
+						iPicFileIndex = -1;
+					iPicFileIndex++;
+					sprintf(strNewFileName, "%s/%s", strDirName, aptDirContents[iPicFileIndex]->strName);
+					if (isPictureFileSupported(strNewFileName))
+					{
+						ShowPicture(ptDevVideoMem, strNewFileName);
+						break;
+					}
+
+				}		
+				case 5: 		/*连播 */
+				{
+					
+					break;
+				}				
+			}
+			
+			}
+	}
 
 }
 
