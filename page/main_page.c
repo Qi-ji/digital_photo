@@ -182,6 +182,7 @@ int MainPageRun(PT_PageParams ptParentPageParams)
 	T_PageParams tPageParams;
 
 	tPageParams.iPageID = GetPageId("mainpage");
+	memset(tPageParams.strCurPictureFile, '\0', 256);
 
 	
 	/*显示页面*/
@@ -198,36 +199,24 @@ int MainPageRun(PT_PageParams ptParentPageParams)
 		{
 			case 0:			/*浏览文件夹*/
 			{
-				debug("you press the first button\n");
 				GetPage("browsepage")->Run(&tPageParams);		/*输入参数是为了判断由哪个页面进入的*/	
 				MainPageShow(&g_tPageLayout);
 				break;
 			}
 			case 1:			/*图片连播*/
 			{
+				GetPage("autopage")->Run(&tPageParams);		/*输入参数是为了判断由哪个页面进入的*/	
+				MainPageShow(&g_tPageLayout);
+				/*
 				picture_scan("./image");
-
-				//while(1)
-				//{
-					picture_display();
-					if(GetInputEvent(&tTempInputEvent) == 0)
-					{
-						printf("11111111111111111111111111111111111111111111111111\n\n");
-						break;
-					}
-						
-				//}
+				picture_display();
+				*/
 				break;
 			}
 			case 2:			/*设置*/
 			{
 				debug("you press the third button\n");
-				picture_scan("./image");
-
-				while(1)
-				{
-					picture_display();
-				}
+			
 				return 0;
 			}
 		}

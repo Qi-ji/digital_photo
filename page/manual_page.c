@@ -439,7 +439,7 @@ static void ManualPageRun(PT_PageParams ptParentPageParams)
 
 
 T_PageAction g_tMPAction = {
-	.name 			= "manual",
+	.name 			= "manualpage",
 	.Run 			= ManualPageRun,
 	.GetInputEvent  = ManualPageGetInputEvent,
 };

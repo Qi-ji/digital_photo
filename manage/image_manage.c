@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <sys/time.h>
+#include <time.h>
 
 #include <sys/types.h>
 #include <dirent.h>
@@ -7,7 +9,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <unistd.h>
-
+#include <page_manager.h>
 
 #include <config.h>
 #include "image_manage.h"
@@ -19,7 +21,7 @@ int pic_index = 0;
 int picture_scan(const char *path)
 {
 	DIR *dir = NULL;
-	//struct stat *file_statbuf;    //ÕâÀïÎÒ¶¨ÒåÎªÖ¸Õë¾Í»á·¢Éú¶Î´íÎóª
+	//struct stat *file_statbuf;    //ÕâÀïÎÒ¶¨ÒåÎªÖ¸Õë¾Í»á·¢Éú¶Î´íÎó?
 									//ÕâÊÇÒòÎªÊ¹ÓÃlstat(cur_pathname, &file_statbuf)Ê±£¬Ã»ÓĞ¸øåfile_statbufÖ¸¶¨Î»ÖÃ£¬ËùÒÔÔÚÊäÈëÄÚÈİÊ±ºò¾Í»á·¢Éú¶Î´íÎó
 	struct stat file_statbuf;
 	struct dirent *ptr = NULL;
@@ -81,11 +83,27 @@ int picture_scan(const char *path)
 	return 0;
 }
 
+
+void MySleep(int ms)
+{
+	struct timeval delay;
+	delay.tv_sec = 0;
+	delay.tv_usec = ms * 1000; // 20 ms
+	select(0, NULL, NULL, NULL, &delay);
+}
+
+extern int g_flag;
+extern T_PageCfg g_tPageCfg;
 int picture_display(void)
 {
 	int i = 0;
 	for(i=0; i<pic_index; i++)
 	{
+		if (g_flag == 1)
+		{
+			return 1;
+		}
+
 		switch(picture_info[i].type)
 		{
 			case BMP_PIC:
@@ -104,7 +122,9 @@ int picture_display(void)
 				printf("UNKNOWN picture type\n");
 				break;
 		}
-		sleep(2);
+	
+		MySleep(g_tPageCfg.iIntervalSecond);
+		//sleep(2);
 	}
     return 0;
 }

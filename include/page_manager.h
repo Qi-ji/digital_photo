@@ -38,6 +38,12 @@ typedef struct PageParams {
     char strCurPictureFile[256];  /* 要处理的第1个图片文件 */
 }T_PageParams, *PT_PageParams;
 
+/* 页面配置信息 */
+typedef struct PageCfg {
+    int iIntervalSecond;      /* 连播模式下图片的显示间隔 */
+    char strSeletedDir[256];  /* 连播模式下要显示哪个目录下的图片 */ 
+}T_PageCfg, *PT_PageCfg;
+
 
 /*页面操作结构体*/
 typedef struct PageAction {
@@ -48,6 +54,14 @@ typedef struct PageAction {
 	struct PageAction *ptNext;    						 /* 链表 */
 }T_PageAction, *PT_PageAction;
 
+/**********************************************************************
+ * 函数名称： GetSlectDir
+ * 功能描述： 返回为浏览模式选择的要显示的文件夹
+ * 输入参数： 
+ * 输出参数： strSeletedDir - 选择的文件夹
+ * 返 回 值： 
+ ***********************************************************************/
+ void GetSlectDir(char *strSeletedDir);
 
 /**********************************************************************
  * 函数名称： RegisterPageAction
@@ -146,6 +160,17 @@ int PagesInit(void);
  * 修改日期 	   版本号	 修改人		  修改内容
  ***********************************************************************/
 int ManualPageInit(void);
+
+/**********************************************************************
+ * 函数名称： AutoPageInit
+ * 功能描述： 注册"连播页面"
+ * 输入参数： 无
+ * 输出参数： 无
+ * 返 回 值： 0 - 成功, 其他值 - 失败
+ * 修改日期        版本号     修改人	      修改内容
+ ***********************************************************************/
+int AutoPageInit(void);
+
 
 #endif 
 

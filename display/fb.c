@@ -260,7 +260,8 @@ void fb_draw_picture_test(pic_info *ppic)
 	//unsigned int cnt_pic= ppic->width * ppic->height * 3 -3;
 	unsigned int cnt_pic= ppic->width * ppic->height * 3 -1;//这里的-1是因为
 															//从0开始计算,所以最后会多一位
-	
+
+	GetDispOpr("fb")->CleanScreen(BLACK);
 	for (y=0; y < ppic->height; y++)
 	{
         for (x=0; x < ppic->width; x++)
@@ -288,7 +289,7 @@ void fb_draw_jpeg_test(pic_info *ppic)
 	unsigned int cnt_pic = 0;
 	//unsigned int cnt_pic= ppic->width * ppic->height * 3 -1;//这里的-1是因为
 															//从0开始计算,所以最后会多一位
-	
+	GetDispOpr("fb")->CleanScreen(BLACK);
 	for (y=0; y < ppic->height; y++)
 	{
         for (x=0; x < ppic->width; x++)
@@ -314,7 +315,7 @@ void fb_draw_png(pic_info *ppic)
 	unsigned int cnt_pic = 0;
 	//unsigned int cnt_pic= ppic->width * ppic->height * 3 -1;//这里的-1是因为
 															//从0开始计算,所以最后会多一位
-	
+	GetDispOpr("fb")->CleanScreen(BLACK);
 	for (y=0; y < ppic->height; y++)
 	{
         for (x=0; x < ppic->width; x++)

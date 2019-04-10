@@ -19,7 +19,7 @@
 /***************************macro definition*************************************/
 
 #define ICON_PATH     "/opt/icons"
-//#define DEFAULT_DIR   "/album_proj/image"
+#define DEFAULT_PLAY_DIR   "/album_proj/image/ScanPicture"
 #define DEFAULT_DIR   "/album_proj"
 
 

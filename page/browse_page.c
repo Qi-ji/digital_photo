@@ -39,7 +39,7 @@ static T_PageLayout g_tBPMenuPageLayout = {		/*页面菜单区域图标及位置*/
 };
 
 static char g_strCurDir[256] = DEFAULT_DIR;
-//static char g_strSelectedDir[256] = DEFAULT_DIR;
+static char g_strSelectedDir[256] = DEFAULT_PLAY_DIR;
 
 /* 用来描述某目录里的内容 */
 static PT_DirContent *g_aptDirContents;  		/* 数组:存有目录下"顶层子目录","文件"的名字 */
@@ -62,6 +62,18 @@ static int g_iNumPerRow, g_iNumPerCol;
 static int g_iStartIndex = 0;			/*记录要打开的文件夹及文件的下标，为翻页情况准备*/
 
 
+/**********************************************************************
+ * 函数名称： GetSlectDir
+ * 功能描述： 返回为浏览模式选择的要显示的文件夹
+ * 输入参数： 
+ * 输出参数： strSeletedDir - 选择的文件夹
+ * 返 回 值： 
+ ***********************************************************************/
+ void GetSlectDir(char *strSeletedDir)
+{
+	strncpy(strSeletedDir, g_strSelectedDir, 256);
+	strSeletedDir[255] = '\0';
+}
 
 
 /**********************************************************************
@@ -620,7 +632,7 @@ static void BrowsePageRun(PT_PageParams ptParentPageParams)
                     if (isPictureFileSupported(tPageParams.strCurPictureFile))
                     {
                         tPageParams.iPageID = GetPageId("browse");
-                        GetPage("manual")->Run(&tPageParams);
+                        GetPage("manualpage")->Run(&tPageParams);
                         BrowsePageShow(&g_tBPMenuPageLayout);
                     }					
 					
