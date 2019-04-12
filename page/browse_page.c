@@ -90,7 +90,7 @@ static int CalcBPMenuLayout(PT_PageLayout ptPageLayout)
 debug("-----------------1.start Calc Browse Page Menu Layout----------------\n");
 	int iXres, iYres, iBpp;  /*显示设备的参数*/
 	int iIconWidth, iIconHeight; /*每个图标的宽、高都是一样的，所以计算第一个图标就可以了*/
-	int iIconTotalByte;			/*每个图标的总大小都是一样的*/
+	int iIconTotalByte;			
 	PT_IconLayout atIconLayout;
 	int i = 0;
 
@@ -520,7 +520,20 @@ static void BrowsePageRun(PT_PageParams ptParentPageParams)
 	PT_VideoMem ptVideoMem;
 	T_PageParams tPageParams;
 	int iError;
-
+	
+	    /* "连续播放图片"时, 是从哪一个目录读取文件呢? 这是由"选择"按钮来选择该目录的
+     * 点击目录图标将进入下一级目录, 哪怎样选择目录呢?
+     * 1. 先点击"选择"按钮
+     * 2. 再点击某个目录图标
+     */
+    int bHaveClickSelectIcon = 0;
+	int bUsedToSelectDir = 0;	/*页面如果是从设置页面过来，则只有选择目录的功能*/
+	
+	/*页面如果是从设置页面过来，则只有选择目录的功能*/
+	if (ptParentPageParams->iPageID == GetPageId("settingpage"))
+	{
+		bUsedToSelectDir = 1;
+	}
 	ptVideoMem = GetDevVideoMem();/*直接在显存上显示*/
 	tPageParams.iPageID = GetPageId("browsepage");
 	T_InputEvent tTempInputEvent;
@@ -561,7 +574,10 @@ static void BrowsePageRun(PT_PageParams ptParentPageParams)
 			
 			if (iIndex < DIR_FILT_MIN_INDEX)/*点击的为menu区域*/
 			{
-
+				if (bUsedToSelectDir && (iIndex == 1)) /* "选择"图标单独处理 */
+                {
+        			PressIcon(&g_atMenuIconLayout[iIndex]);
+                }
 				switch (iIndex)
 				{	
 					case 0: 		/*向上*/
@@ -569,7 +585,7 @@ static void BrowsePageRun(PT_PageParams ptParentPageParams)
 						if (0 == strcmp(g_strCurDir, DEFAULT_DIR))  /* 已经是顶层目录 */
 						{
 							FreeDirContents(g_aptDirContents, g_iDirContentsNumber);
-							return 0;
+							return ;
 						}
 							 
 						pcTmp = strrchr(g_strCurDir, '/'); /* 找到最后一个'/', 把它去掉 */
@@ -580,7 +596,7 @@ static void BrowsePageRun(PT_PageParams ptParentPageParams)
 						if (iError)
 						{
 							debug("GetDirContents error!\n");
-							return 0;
+							return ;
 						}
 						g_iStartIndex = 0;
 						iError = GeneBPDirAndFile(&g_tInterfaceLayout, g_iStartIndex, g_iDirContentsNumber, g_aptDirContents, ptVideoMem);
@@ -588,7 +604,18 @@ static void BrowsePageRun(PT_PageParams ptParentPageParams)
 					}
 					case 1: 		/*选择目录*/
 					{
-						debug("you press the second button\n");
+						if (!bUsedToSelectDir)	/*如果不是从settingpage过来的，这个选项无用*/
+							break;
+						
+						if (!bHaveClickSelectIcon)  /* 第1次点击"选择"按钮 */
+						{
+							bHaveClickSelectIcon = 1;
+						}
+						else
+						{
+							bHaveClickSelectIcon = 0;
+							//PressIcon(&g_atMenuIconLayout[iIndex]);
+						}
 						break;
 					}
 					case 2: 		/*上一页*/
@@ -606,36 +633,55 @@ static void BrowsePageRun(PT_PageParams ptParentPageParams)
 			
 			else 					/*点击的为Interface 目录与文件区域*/
 			{
-				/*单击目录则进入*/
-				iFileIndex = g_iStartIndex + (iIndex - DIR_FILT_MIN_INDEX)/2;	/*除以2是因为下标包括图标跟名字，所以需要除以2才是真正要打开的文件*/
-				if (g_aptDirContents[iFileIndex]->eFileType == FILETYPE_DIR)		/*是文件夹*/
+				if (bHaveClickSelectIcon)		/*已经按下了选择按钮了*/
 				{
-					 snprintf(strTmp, 256, "%s/%s", g_strCurDir, g_aptDirContents[iFileIndex]->strName);
-					 strTmp[255] = '\0';
-					 strcpy(g_strCurDir, strTmp);
-					 FreeDirContents(g_aptDirContents, g_iDirContentsNumber);
-					 iError = GetDirContents(g_strCurDir, &g_aptDirContents, &g_iDirContentsNumber);
-					 if (iError)
-					 {
-						 debug("GetDirContents error!\n");
-						 return ;
-					 }
-					 g_iStartIndex = 0;
-					GeneBPDirAndFile(&g_tInterfaceLayout, g_iStartIndex, g_iDirContentsNumber, g_aptDirContents, ptVideoMem);
+					iFileIndex = g_iStartIndex + (iIndex - DIR_FILT_MIN_INDEX)/2;	/*除以2是因为下标包括图标跟名字，所以需要除以2才是真正要打开的文件*/
+					if (g_aptDirContents[iFileIndex]->eFileType == FILETYPE_DIR)
+					{
+						PressIcon(&g_atMenuIconLayout[1]);
+						bHaveClickSelectIcon = 0;
+						/* 记录目录名 */
+                        snprintf(strTmp, 256, "%s/%s", g_strCurDir, g_aptDirContents[iFileIndex]->strName);
+                        strTmp[255] = '\0';
+                        strcpy(g_strSelectedDir, strTmp);
+					}
 				}
-				else if (g_aptDirContents[iFileIndex]->eFileType == FILETYPE_FILE)	/*是文件*/
+				else
 				{
-					snprintf(tPageParams.strCurPictureFile, 256, "%s/%s", g_strCurDir, g_aptDirContents[iFileIndex]->strName);
-					tPageParams.strCurPictureFile[255] = '\0';
+					/*单击目录则进入*/
+					 iFileIndex = g_iStartIndex + (iIndex - DIR_FILT_MIN_INDEX)/2;	/*除以2是因为下标包括图标跟名字，所以需要除以2才是真正要打开的文件*/
+					 if (g_aptDirContents[iFileIndex]->eFileType == FILETYPE_DIR)
+					 {
+						 snprintf(strTmp, 256, "%s/%s", g_strCurDir, g_aptDirContents[iFileIndex]->strName);
+						 strTmp[255] = '\0';
+						 strcpy(g_strCurDir, strTmp);
+						 FreeDirContents(g_aptDirContents, g_iDirContentsNumber);
+						 iError = GetDirContents(g_strCurDir, &g_aptDirContents, &g_iDirContentsNumber);
+						 if (iError)
+						 {
+							 debug("GetDirContents error!\n");
+							 return ;
+						 }
+						 g_iStartIndex = 0;
+						GeneBPDirAndFile(&g_tInterfaceLayout, g_iStartIndex, g_iDirContentsNumber, g_aptDirContents, ptVideoMem);
+					 }
+				
+				
+				/*是文件 且不是从settingpage转来的，则显示文件*/
+					else if (g_aptDirContents[iFileIndex]->eFileType == FILETYPE_FILE && (!bUsedToSelectDir))	
+					{
+						snprintf(tPageParams.strCurPictureFile, 256, "%s/%s", g_strCurDir, g_aptDirContents[iFileIndex]->strName);
+						tPageParams.strCurPictureFile[255] = '\0';
 
-					//BPJpgTest(strTmp);/*测试是否可以显示*/
-                    if (isPictureFileSupported(tPageParams.strCurPictureFile))
-                    {
-                        tPageParams.iPageID = GetPageId("browse");
-                        GetPage("manualpage")->Run(&tPageParams);
-                        BrowsePageShow(&g_tBPMenuPageLayout);
-                    }					
-					
+						//BPJpgTest(strTmp);/*测试是否可以显示*/
+	                    if (isPictureFileSupported(tPageParams.strCurPictureFile))
+	                    {
+	                        tPageParams.iPageID = GetPageId("browse");
+	                        GetPage("manualpage")->Run(&tPageParams);
+	                        BrowsePageShow(&g_tBPMenuPageLayout);
+	                    }					
+						
+					}
 				}
 				
 			}

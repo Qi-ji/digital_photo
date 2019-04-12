@@ -4,6 +4,7 @@
 #include <pic_manager.h>
 #include <pic_operation.h>
 #include <page_manager.h>
+#include <disp_manager.h>
 #include <render.h>
 #include <file.h>
 #include <disp_manager.h>
@@ -176,14 +177,17 @@ void PressIcon(PT_IconLayout ptLayout)
 	int i;
 	int iButtonWidthBytes;
 	int iLineWidth;
-	unsigned char *pucVideoMem;
+	unsigned int *pucVideoMem;
 	PT_DispOpr ptDispOpr = GetDefaultDispOpr();
 
 	pucVideoMem = ptDispOpr->pdwDispMem;
-	iLineWidth = ptDispOpr->iXres * ptDispOpr->ibpp / 8; 
-	pucVideoMem += ptLayout->iLeftTopY* iLineWidth + ptLayout->iLeftTopX * ptDispOpr->ibpp/ 8; /* 图标在Framebuffer中的地址 */
-	iButtonWidthBytes = (ptLayout->iRightBotX - ptLayout->iLeftTopX + 1) * ptDispOpr->ibpp / 8;
-
+	//iLineWidth = ptDispOpr->iXres * ptDispOpr->ibpp / 8; 
+	iLineWidth = ptDispOpr->iXres; 
+	//pucVideoMem += ptLayout->iLeftTopY* iLineWidth + ptLayout->iLeftTopX * ptDispOpr->ibpp/ 8; /* 图标在Framebuffer中的地址 */
+	pucVideoMem += ptLayout->iLeftTopY* iLineWidth + ptLayout->iLeftTopX ; /* 图标在Framebuffer中的地址 */
+	//iButtonWidthBytes = (ptLayout->iRightBotX - ptLayout->iLeftTopX + 1) * ptDispOpr->ibpp / 8;
+	iButtonWidthBytes = (ptLayout->iRightBotX - ptLayout->iLeftTopX + 1);
+	
 	for (iY = ptLayout->iLeftTopY; iY <= ptLayout->iRightBotY; iY++)
 	{
 		for (i = 0; i < iButtonWidthBytes; i++)
@@ -227,5 +231,6 @@ int isPictureFileSupported(char *strFileName)
 	UnMapFile(&tFileMap);	
 	return 1;
 }
+
 
 

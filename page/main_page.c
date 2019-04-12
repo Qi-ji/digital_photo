@@ -215,10 +215,12 @@ int MainPageRun(PT_PageParams ptParentPageParams)
 			}
 			case 2:			/*设置*/
 			{
-				debug("you press the third button\n");
-			
-				return 0;
+				GetPage("settingpage")->Run(&tPageParams);		/*输入参数是为了判断由哪个页面进入的*/	
+				MainPageShow(&g_tPageLayout);
+				break;
 			}
+			default:
+				break;
 		}
 	}
 }
