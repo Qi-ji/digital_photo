@@ -161,7 +161,7 @@ static void SettingPageRun(PT_PageParams ptParentPageParams)
 			}
 			case 1: 		/*设置间隔*/
 			{
-				GetPage("autopage")->Run(&tPageParams); 	/*输入参数是为了判断由哪个页面进入的*/ 
+				GetPage("interval")->Run(&tPageParams); 	/*输入参数是为了判断由哪个页面进入的*/ 
 				SettingPageShow(&g_atSPMenuLayout);
 
 				break;

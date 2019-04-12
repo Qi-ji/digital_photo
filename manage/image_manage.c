@@ -20,6 +20,8 @@ int pic_index = 0;
 
 int picture_scan(const char *path)
 {
+	pic_index = 0;
+
 	DIR *dir = NULL;
 	//struct stat *file_statbuf;    //这里我定义为指针就会发生段错误?
 									//这是因为使用lstat(cur_pathname, &file_statbuf)时，没有给錰ile_statbuf指定位置，所以在输入内容时候就会发生段错误

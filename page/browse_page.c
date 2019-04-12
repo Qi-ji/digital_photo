@@ -644,6 +644,7 @@ static void BrowsePageRun(PT_PageParams ptParentPageParams)
                         snprintf(strTmp, 256, "%s/%s", g_strCurDir, g_aptDirContents[iFileIndex]->strName);
                         strTmp[255] = '\0';
                         strcpy(g_strSelectedDir, strTmp);
+						debug("g_strSelectedDir = %s\n", g_strSelectedDir);
 					}
 				}
 				else

@@ -36,8 +36,10 @@ static int AutoPageGetInputEvent(PT_PageLayout ptPageLayout, PT_InputEvent ptInp
  * ·µ »Ø Öµ£º ÎÞ
  ***********************************************************************/
 static void *AutoPageFunction(void *pVoid)
-{
+{	
+	debug("g_tPageCfg.strSeletedDir = %s\n", g_tPageCfg.strSeletedDir);
 	picture_scan(g_tPageCfg.strSeletedDir);
+	//GetDefaultDispOpr()->CleanScreen(BLACK);
 	while(1)
 	{
 /*
